@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+      
+    
+    
+      
+    
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+  <meta name="msvalidate.01" content="1699A46CB5242072D8403C073F576423">
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/dragon/dragon-apple-touch-icon.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/dragon/dragon-favicon-32x32.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/dragon/dragon-favicon-16x16.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/dragon/dragon-logo.svg?v=7.1.2" color="#222">
+
+
+
+  <meta name="msapplication-config" content="/images/dragon/dragon-browserconfig.xml">
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.2',
+    sidebar: {"position":"right","width":180,"display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: true,
+    lazyload: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="换行符 Scala是面向行的语言，语句可以用分号或换行符结束 Scala中，如果一行仅有一个语句，末尾的分号通常是可选的">
+<meta name="keywords" content="Big Data,Spark,Spark Streaming,Scala">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark Streaming -- Scala语法">
+<meta property="og:url" content="http://zhongmingmao.me/2019/07/12/spark-streaming-scala-grammar/index.html">
+<meta property="og:site_name" content="点滴积累">
+<meta property="og:description" content="换行符 Scala是面向行的语言，语句可以用分号或换行符结束 Scala中，如果一行仅有一个语句，末尾的分号通常是可选的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://spark-streaming-1253868755.cos.ap-guangzhou.myqcloud.com/spark-streaming-scala-type.png">
+<meta property="og:updated_time" content="2020-04-30T05:35:06.478Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark Streaming -- Scala语法">
+<meta name="twitter:description" content="换行符 Scala是面向行的语言，语句可以用分号或换行符结束 Scala中，如果一行仅有一个语句，末尾的分号通常是可选的">
+<meta name="twitter:image" content="https://spark-streaming-1253868755.cos.ap-guangzhou.myqcloud.com/spark-streaming-scala-type.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="点滴积累" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="http://zhongmingmao.me/2019/07/12/spark-streaming-scala-grammar/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spark Streaming -- Scala语法 | 点滴积累</title>
+  
+
+
+
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97268729-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-97268729-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fad94c1137504ba7685443e9d1f2abe9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">点滴积累</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">127</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">38</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">352</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhongmingmao.me/2019/07/12/spark-streaming-scala-grammar/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhongmingmao">
+      <meta itemprop="description" content="懦夫从不启程">
+      <meta itemprop="image" content="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点滴积累">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spark Streaming -- Scala语法
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-13 01:16:00" itemprop="dateCreated datePublished" datetime="2019-07-13T01:16:00+08:00">2019-07-13</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/big-data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/big-data/spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/big-data/spark/spark-streaming/" itemprop="url" rel="index"><span itemprop="name">Spark Streaming</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/07/12/spark-streaming-scala-grammar/" class="leancloud_visitors" data-flag-title="Spark Streaming -- Scala语法">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">6.2k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">11 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="换行符"><a href="#换行符" class="headerlink" title="换行符"></a>换行符</h2><ol>
+<li>Scala是面向<strong>行</strong>的语言，语句可以用<strong>分号</strong>或<strong>换行符</strong>结束</li>
+<li>Scala中，如果一行仅有一个语句，末尾的分号通常是<strong>可选</strong>的</li>
+</ol>
+<a id="more"></a>
+
+<h2 id="统一类型"><a href="#统一类型" class="headerlink" title="统一类型"></a>统一类型</h2><img src="https://spark-streaming-1253868755.cos.ap-guangzhou.myqcloud.com/spark-streaming-scala-type.png" width="1000/">
+
+<ol>
+<li>Scala中没有所谓的基本数据类型，<strong>一切皆对象</strong>，所有的数据类型都是以对象形式存在，<strong>函数也是一种对象</strong></li>
+<li><strong>Any是所有类型的超类型</strong>，定义了一些通用的方法：equals和hashCode等，Any有两个直接子类：<strong>AnyVal</strong>、<strong>AnyRef</strong></li>
+<li>AnyVal代表<strong>值类型</strong>，其中<strong>Unit是不带任何意义的类型</strong>，在函数返回时，可以以Unit作为返回类型</li>
+<li>AnyRef代表<strong>引用类型</strong>，所有非值类型都被定义为引用类型，用户声明的<strong>自定义类型</strong>都属于AnyRef的子类型<ul>
+<li>Java运行环境调用Scala，AnyRef会被当做Object基类</li>
+</ul>
+</li>
+<li><strong>Nothing是所有类型的子类型</strong>，包括值类型和引用类型，<strong>Nothing也是Null的子类型</strong>，也被称为<strong>底部类型</strong><ul>
+<li><strong>没有一个值是Nothing类型的</strong>，Nothing类型通常用于程序<strong>非正常结束</strong>的信号</li>
+<li>这与Java中返回<strong>null</strong>类似，可以将Nothing理解为不定义值的表达类型，在非正常返回时使用</li>
+</ul>
+</li>
+<li><strong>Null是所有引用类型的子类型</strong>，它有一个单例值由关键字Null所定义<ul>
+<li>Null主要是使得Scala满足<strong>和其他JVM语言的互操作性</strong></li>
+<li>但是Null是非常容易<strong>引发程序崩溃</strong>的类型，Scala代码中采用了各种机制来避免使用Null类型</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> list: <span class="type">List</span>[<span class="type">Any</span>] = <span class="type">List</span>(<span class="string">"a string"</span>, <span class="number">732</span>, 'c', <span class="literal">true</span>, () =&gt; <span class="string">"func"</span>)</span><br><span class="line">list.foreach(element =&gt; println(element))</span><br></pre></td></tr></table></figure>
+
+<h2 id="变量-常量"><a href="#变量-常量" class="headerlink" title="变量 + 常量"></a>变量 + 常量</h2><ol>
+<li>在程序运行过程中值可能改变的量称为变量，不会发生变化的量称为常量</li>
+<li>声明变量关键字<strong>var</strong>，声明常量关键字<strong>val</strong></li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> myVar: <span class="type">String</span> = <span class="string">"Spark Action"</span></span><br><span class="line"><span class="keyword">val</span> myVal: <span class="type">String</span> = <span class="string">"Spark Streaming Action"</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 根据初始值，进行数据类型推断</span></span><br><span class="line"><span class="keyword">var</span> myInt = <span class="number">27</span></span><br><span class="line"><span class="keyword">val</span> myStr = <span class="string">"Hello, Scala"</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="条件-循环"><a href="#条件-循环" class="headerlink" title="条件 + 循环"></a>条件 + 循环</h2><ol>
+<li>Scala不支持<strong>break</strong>和<strong>continue</strong>语句<ul>
+<li>多数情况下，break和continue不是必要的，可以用<strong>小函数</strong>更好地解决</li>
+<li>在循环中使用continue是非常容易理解的，但在Scala的<strong>函数闭包</strong>中是难以理解的</li>
+<li>如果巧妙地使用<strong>函数字面量</strong>代替continue和break，可以使代码更加精简</li>
+<li>可以用<strong>纯库函数</strong>的形式提供对两者的支持</li>
+</ul>
+</li>
+<li>从Scala 2.8之后，可以通过<code>scala.util.control.Breaks._</code>库来使用break操作</li>
+<li>对于continue，Scala原生库还是没有提供支持，可以通过<code>scala.util.control.Breaks._</code>来实现</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> util.control.<span class="type">Breaks</span>._</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">BreakTests</span> <span class="keyword">extends</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> sum = <span class="number">0</span></span><br><span class="line">  <span class="comment">// 循环之外</span></span><br><span class="line">  breakable &#123;</span><br><span class="line">    <span class="keyword">for</span> (i &lt;- <span class="number">0</span> to <span class="number">1000</span>) &#123;</span><br><span class="line">      sum += i</span><br><span class="line">      <span class="keyword">if</span> (sum &gt;= <span class="number">1000</span>) <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.util.control.<span class="type">Breaks</span>._</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">ContinueTests</span> <span class="keyword">extends</span> <span class="title">App</span> </span>&#123;</span><br><span class="line">  <span class="keyword">for</span> (i &lt;- <span class="number">0</span> to <span class="number">1000</span>) &#123;</span><br><span class="line">    <span class="comment">// 循环之内</span></span><br><span class="line">    breakable &#123;</span><br><span class="line">      <span class="keyword">if</span> (i % <span class="number">2</span> == <span class="number">0</span>) <span class="keyword">break</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数-方法"><a href="#函数-方法" class="headerlink" title="函数 + 方法"></a>函数 + 方法</h2><ol>
+<li>在Scala中，<strong>一切皆对象</strong>，函数在Scala中也是一个对象，借用函数式编程的思想，函数可以作为参数传递给另一个函数</li>
+<li>在Java中，方法和函数并没有区别，但在Scala中，<strong>Method被翻译成方法</strong>，<strong>Function被翻译成函数</strong><ul>
+<li>Scala Method：类中定义的方法，属于类的一部分，与Java的方法类似</li>
+<li>Scala Function：代表一个对象，可以像值类型一样赋值给一个变量<ul>
+<li>Function是一个<strong>完整的对象</strong>，本质上是继承了Trait的类的对象</li>
+<li>Function是一个对象，可以作为参数传入到方法中，而Method不行</li>
+</ul>
+</li>
+<li>Scala中使用<strong>def语句</strong>定义<strong>方法</strong>，使用<strong>val语句</strong>定义<strong>函数</strong></li>
+<li>可以在方法名称后面紧跟一个<strong>空格加下划线</strong>，<strong>将方法转换为函数</strong>，通常编译器会自动完成该操作<ul>
+<li>例如将一个方法传入接收函数参数的地方，就会自动转换</li>
+</ul>
+</li>
+<li>函数和方法是可以<strong>相互转换</strong>的</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">FunctionMethodTests</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 方法定义</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">m1</span></span>(x: <span class="type">Int</span>): <span class="type">Int</span> = x + <span class="number">3</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 方法声明，没有等号和方法主体，方法会被隐式声明为抽象，包含它的类型也是一个抽象类型</span></span><br><span class="line">  <span class="comment">// 如果方法没有返回值，可以返回Unit，类似于Java的void</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">m2</span></span>(x: <span class="type">Int</span>): <span class="type">Unit</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 函数</span></span><br><span class="line">  <span class="keyword">val</span> f1 = (x: <span class="type">Int</span>) =&gt; x + <span class="number">3</span></span><br><span class="line">  <span class="keyword">val</span> f2 = m1 _ <span class="comment">// 方法转函数</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数式编程"><a href="#函数式编程" class="headerlink" title="函数式编程"></a>函数式编程</h3><h4 id="可变参数列表"><a href="#可变参数列表" class="headerlink" title="可变参数列表"></a>可变参数列表</h4><p>可变参数列表是指在定义方法时，不需要指定函数参数的个数，而在函数被调用时灵活传入，如同传入一个<strong>变长数组</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">  printStrings(<span class="string">"Java"</span>, <span class="string">"Scala"</span>, <span class="string">"Python"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 可变参数，只有函数的最后一个参数可以设置为可重复的可变参数列表</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">printStrings</span></span>(args: <span class="type">String</span>*) = &#123;</span><br><span class="line">  <span class="keyword">var</span> i: <span class="type">Int</span> = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (arg &lt;- args) &#123;</span><br><span class="line">    println(<span class="string">"Arg value["</span> + i + <span class="string">"] = "</span> + arg)</span><br><span class="line">    i = i + <span class="number">1</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="默认参数值"><a href="#默认参数值" class="headerlink" title="默认参数值"></a>默认参数值</h4><p>Java不支持默认参数值，而Scala支持</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Test2</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">    println(addInt())</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">addInt</span></span>(a: <span class="type">Int</span> = <span class="number">5</span>, b: <span class="type">Int</span> = <span class="number">7</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">    <span class="keyword">var</span> sum: <span class="type">Int</span> = <span class="number">0</span></span><br><span class="line">    sum = a + b</span><br><span class="line">    <span class="keyword">return</span> sum</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="偏应用函数"><a href="#偏应用函数" class="headerlink" title="偏应用函数"></a>偏应用函数</h4><p>偏应用函数指的是<strong>固定方法的某一个参数</strong>，然后重新声明为一个函数，这是Scala提供的<strong>语法糖</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">  <span class="keyword">val</span> date = <span class="keyword">new</span> <span class="type">Date</span></span><br><span class="line">  <span class="comment">// 偏应用函数，_表示缺失，将新函数的索引值重新赋值给logWithDateBound</span></span><br><span class="line">  <span class="keyword">val</span> logWithDateBound = log(date, _: <span class="type">String</span>)</span><br><span class="line">  logWithDateBound(<span class="string">"message1"</span>)</span><br><span class="line">  logWithDateBound(<span class="string">"message2"</span>)</span><br><span class="line">  logWithDateBound(<span class="string">"message3"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">log</span></span>(date: <span class="type">Date</span>, message: <span class="type">String</span>) = &#123;</span><br><span class="line">  println(date + <span class="string">" --- "</span> + message)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="指定函数参数名"><a href="#指定函数参数名" class="headerlink" title="指定函数参数名"></a>指定函数参数名</h4><p>在Java或C++中，调用函数时只能按照函数定义时指定的顺序将参数传入，而Scala和Python支持指定参数名</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">  printInt(b = <span class="number">5</span>, a = <span class="number">7</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">printInt</span></span>(a: <span class="type">Int</span>, b: <span class="type">Int</span>) = &#123;</span><br><span class="line">  println(<span class="string">"a="</span> + a + <span class="string">", b="</span> + b)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="高级函数"><a href="#高级函数" class="headerlink" title="高级函数"></a>高级函数</h4><ol>
+<li>高阶函数指的是<em><strong>操作其他函数的函数</strong></em></li>
+<li>在Scala中，可以将函数作为<strong>参数</strong>来传递或者通过运算<strong>返回一个函数的引用</strong>，这种函数就是高阶函数</li>
+<li>在Java 8引入了<strong>Lambda</strong>表达式，也支持这种特性</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">  println(apply(layout, <span class="number">10</span>)) <span class="comment">// [10]</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// apply()函数使用了另外一个函数f()和值v作为参数，而函数f()又调用了参数v</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">apply</span></span>(f: <span class="type">Int</span> =&gt; <span class="type">String</span>, v: <span class="type">Int</span>) = f(v)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">layout</span></span>[<span class="type">A</span>](x: <span class="type">A</span>) = <span class="string">"["</span> + x.toString + <span class="string">"]"</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="函数柯里化"><a href="#函数柯里化" class="headerlink" title="函数柯里化"></a>函数柯里化</h4><ol>
+<li>函数柯里化是<strong>函数式编程</strong>中的一个概念</li>
+<li>函数柯里化<ul>
+<li>将原来接收<strong>两个参数</strong>的函数，变成新的接收<strong>一个参数</strong>的函数</li>
+<li>新的函数返回一个<strong>以第二个参数为参数的函数</strong></li>
+</ul>
+</li>
+<li>Scala支持函数柯里化</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span></span>(args: <span class="type">Array</span>[<span class="type">String</span>]): <span class="type">Unit</span> = &#123;</span><br><span class="line">  println(add1(<span class="number">1</span>, <span class="number">2</span>))</span><br><span class="line">  println(add2(<span class="number">1</span>)(<span class="number">2</span>))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add1</span></span>(x: <span class="type">Int</span>, y: <span class="type">Int</span>) = x + y</span><br><span class="line"></span><br><span class="line"><span class="comment">// 柯里化本质上是依次调用了两个普通函数（非柯里化函数）的过程</span></span><br><span class="line"><span class="comment">// 拆解成：def add2(x:Int) = (y:Int) =&gt; x+y</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add2</span></span>(x: <span class="type">Int</span>)(y: <span class="type">Int</span>) = x + y</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="特质、单例和样例类"><a href="#特质、单例和样例类" class="headerlink" title="特质、单例和样例类"></a>特质、单例和样例类</h2><h3 id="特质"><a href="#特质" class="headerlink" title="特质"></a>特质</h3><ol>
+<li><strong>特质</strong>（Traits）用于在类（Class）之间共享程序<strong>接口</strong>（Interface）和<strong>字段</strong>（Field）<ul>
+<li>是Scala独有的一种特性，类似于<strong>Java 8的接口</strong></li>
+</ul>
+</li>
+<li><strong>类和对象（Objects）可以扩展特质，但特质不能被实例化，因为特质没有参数</strong></li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Iterator</span>[<span class="type">A</span>] </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">hasNext</span></span>: <span class="type">Boolean</span></span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">next</span></span>(): <span class="type">A</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IntIterator</span>(<span class="params">to: <span class="type">Int</span></span>) <span class="keyword">extends</span> <span class="title">Iterator</span>[<span class="type">Int</span>] </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">var</span> current = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">hasNext</span></span>: <span class="type">Boolean</span> = current &lt; to</span><br><span class="line"></span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">def</span> <span class="title">next</span></span>(): <span class="type">Int</span> = &#123;</span><br><span class="line">    <span class="keyword">if</span> (hasNext) &#123;</span><br><span class="line">      <span class="keyword">val</span> t = current</span><br><span class="line">      current += <span class="number">1</span></span><br><span class="line">      t</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="number">0</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 测试代码 */</span></span><br><span class="line"><span class="keyword">val</span> iterator = <span class="keyword">new</span> <span class="type">IntIterator</span>(<span class="number">10</span>)</span><br><span class="line">println(iterator.next()) <span class="comment">// 0</span></span><br><span class="line">println(iterator.next()) <span class="comment">// 1</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="混入"><a href="#混入" class="headerlink" title="混入"></a>混入</h4><p>当某个特质被用于<strong>组合类</strong>时，被称为<strong>混入</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  <span class="keyword">val</span> message: <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">val</span> message: <span class="type">String</span> = <span class="string">"I'm an instance of class B"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">C</span> <span class="keyword">extends</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">loudMessage</span> </span>= message.toUpperCase</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 类D有一个父类B和一个混入C</span></span><br><span class="line"><span class="comment">// 一个类只能有一个父类（extends关键字），但可以有多个混入（with关键字）</span></span><br><span class="line"><span class="comment">// 混入和某个父类可能有相同的父类，例如A</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">D</span> <span class="keyword">extends</span> <span class="title">B</span> <span class="keyword">with</span> <span class="title">C</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">/*</span> <span class="title">测试代码</span> <span class="title">*/</span></span></span><br><span class="line"><span class="class"><span class="title">val</span> <span class="title">d</span> </span>= <span class="keyword">new</span> <span class="type">D</span></span><br><span class="line">println(d.message) <span class="comment">// I'm an instance of class B</span></span><br><span class="line">println(d.loudMessage) <span class="comment">// I'M AN INSTANCE OF CLASS B</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h3><p>Scala在<strong>语言特性</strong>中提供单例的支持，即<strong>object</strong>关键字</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Logger</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">info</span></span>(message: <span class="type">String</span>) = println(<span class="string">s"INFO:<span class="subst">$message</span>"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 测试代码 */</span></span><br><span class="line"><span class="comment">// 不需要new一个Logger对象，直接Logger.info调用，但又区别于静态函数（static）</span></span><br><span class="line"><span class="type">Logger</span>.info(<span class="string">"Scala object"</span>)</span><br></pre></td></tr></table></figure>
+
+<h4 id="伴生对象"><a href="#伴生对象" class="headerlink" title="伴生对象"></a>伴生对象</h4><p>将<strong>类</strong>和<strong>object</strong>放在<strong>同一个文件</strong>中，形成<strong>伴生对象</strong></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.math._</span><br><span class="line"></span><br><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Circle</span>(<span class="params">radius: <span class="type">Double</span></span>) </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">import</span> <span class="type">Circle</span>._</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 单例对象Circle具有可用于每个实例的方法calculateArea</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">area</span></span>: <span class="type">Double</span> = calculateArea(radius)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">object</span> <span class="title">Circle</span> </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="function"><span class="keyword">def</span> <span class="title">calculateArea</span></span>(radius: <span class="type">Double</span>): <span class="type">Double</span> = <span class="type">Pi</span> * pow(radius, <span class="number">2.0</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 测试代码 */</span></span><br><span class="line"><span class="keyword">val</span> circle = <span class="keyword">new</span> <span class="type">Circle</span>(<span class="number">5.0</span>)</span><br><span class="line">println(circle.area)</span><br></pre></td></tr></table></figure>
+
+<h3 id="样例类"><a href="#样例类" class="headerlink" title="样例类"></a>样例类</h3><ol>
+<li>在Java中，有一种类只有<strong>get/set</strong>方法，在网站开发和数据库绑定的DAO设计模式中比较常见</li>
+<li>Scala将这种特殊的类<strong>内化在语言特性</strong>中，即样例类，经常与<strong>模式匹配</strong>结合使用</li>
+</ol>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="class"><span class="keyword">class</span> <span class="title">Book</span>(<span class="params">isbn: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">case</span> <span class="title">class</span> <span class="title">Message</span>(<span class="params">sender: <span class="type">String</span>, recipient: <span class="type">String</span>, body: <span class="type">String</span></span>)</span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">/*</span> <span class="title">样例代码</span> <span class="title">*/</span></span></span><br><span class="line"><span class="class"><span class="title">//</span> <span class="title">没有使用关键字new来实例化Book类，case类默认会是使用apply方法来处理对象构造</span></span></span><br><span class="line"><span class="class"><span class="title">val</span> <span class="title">book</span> </span>= <span class="type">Book</span>(<span class="string">"123"</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> message = <span class="type">Message</span>(<span class="string">"A@gmail.com"</span>, <span class="string">"B@gmail.com"</span>, <span class="string">"hello scala"</span>)</span><br><span class="line"><span class="comment">// 使用copy来复制对象</span></span><br><span class="line"><span class="keyword">val</span> m = message.copy(sender = message.sender, recipient = <span class="string">"C@gmail.com"</span>)</span><br><span class="line">println(m.sender) <span class="comment">// A@gmail.com</span></span><br><span class="line">println(m.recipient) <span class="comment">// C@gmail.com</span></span><br><span class="line">println(m.body) <span class="comment">// hello scala</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+      
+
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/08/big-data-spark-streaming/" rel="bookmark">大数据 -- Spark Streaming</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/09/big-data-spark-structured-streaming/" rel="bookmark">大数据 -- Structured Streaming</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/11/big-data-linear-regression/" rel="bookmark">大数据 -- 线性回归</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/12/big-data-spark-flink/" rel="bookmark">大数据 -- Spark + Flink</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/05/big-data-spark-overview/" rel="bookmark">大数据 -- Spark概述</a></div>
+      
+    </li>
+  
+  </ul>
+
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhongmingmao</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://zhongmingmao.me/2019/07/12/spark-streaming-scala-grammar/" title="Spark Streaming -- Scala语法">http://zhongmingmao.me/2019/07/12/spark-streaming-scala-grammar/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/big-data/" rel="tag"><i class="fa fa-tag"></i> Big Data</a>
+          
+            <a href="/tags/spark/" rel="tag"><i class="fa fa-tag"></i> Spark</a>
+          
+            <a href="/tags/spark-streaming/" rel="tag"><i class="fa fa-tag"></i> Spark Streaming</a>
+          
+            <a href="/tags/scala/" rel="tag"><i class="fa fa-tag"></i> Scala</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/12/big-data-spark-flink/" rel="next" title="大数据 -- Spark + Flink">
+                <i class="fa fa-chevron-left"></i> 大数据 -- Spark + Flink
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/14/java-performance-stream/" rel="prev" title="Java性能 -- Stream">
+                Java性能 -- Stream <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg" alt="zhongmingmao">
+            
+              <p class="site-author-name" itemprop="name">zhongmingmao</p>
+              <div class="site-description motion-element" itemprop="description">懦夫从不启程</div>
+          </div>
+
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhongmingmao0625@gmail.com" title="E-Mail &rarr; mailto:zhongmingmao0625@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+             <div class="cc-license motion-element" itemprop="license">
+              
+              
+                
+              
+              
+              
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+             </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#换行符"><span class="nav-number">1.</span> <span class="nav-text">换行符</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#统一类型"><span class="nav-number">2.</span> <span class="nav-text">统一类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#变量-常量"><span class="nav-number">3.</span> <span class="nav-text">变量 + 常量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#条件-循环"><span class="nav-number">4.</span> <span class="nav-text">条件 + 循环</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#函数-方法"><span class="nav-number">5.</span> <span class="nav-text">函数 + 方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#函数式编程"><span class="nav-number">5.1.</span> <span class="nav-text">函数式编程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#可变参数列表"><span class="nav-number">5.1.1.</span> <span class="nav-text">可变参数列表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#默认参数值"><span class="nav-number">5.1.2.</span> <span class="nav-text">默认参数值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#偏应用函数"><span class="nav-number">5.1.3.</span> <span class="nav-text">偏应用函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#指定函数参数名"><span class="nav-number">5.1.4.</span> <span class="nav-text">指定函数参数名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#高级函数"><span class="nav-number">5.1.5.</span> <span class="nav-text">高级函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#函数柯里化"><span class="nav-number">5.1.6.</span> <span class="nav-text">函数柯里化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#特质、单例和样例类"><span class="nav-number">6.</span> <span class="nav-text">特质、单例和样例类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特质"><span class="nav-number">6.1.</span> <span class="nav-text">特质</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#混入"><span class="nav-number">6.1.1.</span> <span class="nav-text">混入</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#单例"><span class="nav-number">6.2.</span> <span class="nav-text">单例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#伴生对象"><span class="nav-number">6.2.1.</span> <span class="nav-text">伴生对象</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#样例类"><span class="nav-number">6.3.</span> <span class="nav-text">样例类</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhongmingmao</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">1.9m</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">58:48</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.2</div>
+
+
+
+
+        
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=61684383";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fastclick@1/lib/fastclick.min.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery_lazyload@1/jquery.lazyload.min.js"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.pack.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1.1/reading_progress.min.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.2"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  
+  
+
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.json";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz',
+                'X-LC-Key': 'Vfku3wPjnVYyHe33mjB6bJXY',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+    
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-bookmark@1/bookmark.min.js"></script>
+  <script>
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+<script>
+  $('.highlight').not('.gist .highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      const selection = document.getSelection();
+      const selected = selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+        if (result) $(this).text('复制成功');
+        else $(this).text('复制失败');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+      if (selected) {
+        selection.removeAllRanges();
+        selection.addRange(selected);
+      }
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

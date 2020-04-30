@@ -1,0 +1,1684 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+      
+    
+    
+      
+    
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+  <meta name="msvalidate.01" content="1699A46CB5242072D8403C073F576423">
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/dragon/dragon-apple-touch-icon.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/dragon/dragon-favicon-32x32.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/dragon/dragon-favicon-16x16.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/dragon/dragon-logo.svg?v=7.1.2" color="#222">
+
+
+
+  <meta name="msapplication-config" content="/images/dragon/dragon-browserconfig.xml">
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.2',
+    sidebar: {"position":"right","width":180,"display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: true,
+    lazyload: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="O/R MappingRDBMS : Relational database management system     Object RDBMS    粒度 类 表   继承 有 无   唯一性 a==ba.equals(b) 主键   关联 引用 外键   数据访问 逐级访问 SQL数量要少">
+<meta name="keywords" content="Spring,Spring Boot,O&#x2F;R Mapping,JPA,Spring Data,Spring Data JPA,Hibernate,UML">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring -- Spring Data JPA">
+<meta property="og:url" content="http://zhongmingmao.me/2019/08/17/spring-spring-data-jpa/index.html">
+<meta property="og:site_name" content="点滴积累">
+<meta property="og:description" content="O/R MappingRDBMS : Relational database management system     Object RDBMS    粒度 类 表   继承 有 无   唯一性 a==ba.equals(b) 主键   关联 引用 外键   数据访问 逐级访问 SQL数量要少">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-sequence.png">
+<meta property="og:image" content="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-deployment.png">
+<meta property="og:image" content="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-object.png">
+<meta property="og:image" content="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-state.png">
+<meta property="og:updated_time" content="2020-04-30T05:35:06.478Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring -- Spring Data JPA">
+<meta name="twitter:description" content="O/R MappingRDBMS : Relational database management system     Object RDBMS    粒度 类 表   继承 有 无   唯一性 a==ba.equals(b) 主键   关联 引用 外键   数据访问 逐级访问 SQL数量要少">
+<meta name="twitter:image" content="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-sequence.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="点滴积累" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="http://zhongmingmao.me/2019/08/17/spring-spring-data-jpa/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring -- Spring Data JPA | 点滴积累</title>
+  
+
+
+
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97268729-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-97268729-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fad94c1137504ba7685443e9d1f2abe9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">点滴积累</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">127</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">38</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">352</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhongmingmao.me/2019/08/17/spring-spring-data-jpa/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhongmingmao">
+      <meta itemprop="description" content="懦夫从不启程">
+      <meta itemprop="image" content="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点滴积累">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spring -- Spring Data JPA
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-17 09:37:09" itemprop="dateCreated datePublished" datetime="2019-08-17T09:37:09+08:00">2019-08-17</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/spring/" itemprop="url" rel="index"><span itemprop="name">Spring</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/spring/spring-boot/" itemprop="url" rel="index"><span itemprop="name">Spring Boot</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/08/17/spring-spring-data-jpa/" class="leancloud_visitors" data-flag-title="Spring -- Spring Data JPA">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">13k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">24 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="O-R-Mapping"><a href="#O-R-Mapping" class="headerlink" title="O/R Mapping"></a>O/R Mapping</h2><p>RDBMS : <strong>Relational</strong> database management system</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Object</th>
+<th>RDBMS</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>粒度</td>
+<td>类</td>
+<td>表</td>
+</tr>
+<tr>
+<td>继承</td>
+<td>有</td>
+<td>无</td>
+</tr>
+<tr>
+<td>唯一性</td>
+<td>a==b<br>a.equals(b)</td>
+<td>主键</td>
+</tr>
+<tr>
+<td>关联</td>
+<td>引用</td>
+<td>外键</td>
+</tr>
+<tr>
+<td>数据访问</td>
+<td>逐级访问</td>
+<td>SQL数量要少</td>
+</tr>
+</tbody></table>
+<a id="more"></a>
+
+<h2 id="Hibernate"><a href="#Hibernate" class="headerlink" title="Hibernate"></a>Hibernate</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><ol>
+<li>Hibernate是一款<strong>开源</strong>的<strong>O/R Mapping</strong>框架</li>
+<li>将开发者从95%的常见<strong>数据持久化</strong>（<strong>简单的CRUD</strong>）工作中解放出来</li>
+<li>屏蔽<strong>底层数据库</strong>（MySQL/Oracle/H2）的差异</li>
+</ol>
+<h3 id="发展历程"><a href="#发展历程" class="headerlink" title="发展历程"></a>发展历程</h3><ol>
+<li>2001年，Hibernate发布第一个版本</li>
+<li>2003年，Hibernate开发团队加入JBoss</li>
+<li>2006年，<strong>Hibernate 3.2成为JPA实现</strong></li>
+</ol>
+<h2 id="JPA"><a href="#JPA" class="headerlink" title="JPA"></a>JPA</h2><ol>
+<li>JPA : <strong>Java Persistence API</strong></li>
+<li>JPA为<strong>O/R Mapping</strong>提供了一种<em><strong>基于POJO的持久化模型</strong></em><ul>
+<li>简化数据持久化代码的开发工作</li>
+<li>为Java社区屏蔽<strong>不同持久化API</strong>（Hibernate/JDO/EJB）的差异</li>
+</ul>
+</li>
+<li>在2006年<strong>JPA 1.0</strong>作为<strong>JSR 220</strong>的一部分正式发布（JSR，Java Specification Request）</li>
+</ol>
+<h2 id="Spring-Data"><a href="#Spring-Data" class="headerlink" title="Spring Data"></a>Spring Data</h2><ol>
+<li>Spring将与数据操作相关的内容<strong>剥离出Spring Framework</strong>，统一到<strong>Spring Data</strong></li>
+<li>在<strong>保留底层存储特性</strong>的同时，提供<strong>相对一致</strong>的，基于<strong>Spring</strong>的编程模型</li>
+<li>主要模块：Spring Data Commons、Spring Data JDBC、<strong>Spring Data JPA</strong>、Spring Data Redis<ul>
+<li>Spring Data JDBC – JdbcTemplate</li>
+<li>Spring Data Redis – RedisTemplate</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-jpa<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>2.1.7.RELEASE<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="JPA注解"><a href="#JPA注解" class="headerlink" title="JPA注解"></a>JPA注解</h2><ol>
+<li>实体<ul>
+<li>@Entity</li>
+<li>@MappedSuperclass</li>
+<li>@Table</li>
+</ul>
+</li>
+<li>主键<ul>
+<li>@Id<ul>
+<li>@GeneratedValue(strategy, generator)</li>
+<li>@SequenceGenerator(name, sequenceName)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>映射<ul>
+<li>@Column(name, nullable, length, insertable, updatable)</li>
+<li>@JoinTable(name)、@JoinColumn(name)</li>
+</ul>
+</li>
+<li>关系<ul>
+<li>@OneToOne、@OneToMany、@ManyToOne、@ManyToMany</li>
+<li>@OrderBy</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="comment">// 没有@Table注解，表名即为Product</span></span><br><span class="line"><span class="meta">@Entity</span>(name = <span class="string">"Product"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Product</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span>(strategy = GenerationType.SEQUENCE, generator = <span class="string">"sequence-generator"</span>)</span><br><span class="line">    <span class="meta">@SequenceGenerator</span>(name = <span class="string">"sequence-generator"</span>, sequenceName = <span class="string">"product_sequence"</span>)</span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span>(name = <span class="string">"product_name"</span>)</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="SpringBucks"><a href="#SpringBucks" class="headerlink" title="SpringBucks"></a>SpringBucks</h2><h3 id="UML"><a href="#UML" class="headerlink" title="UML"></a>UML</h3><h4 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h4><img src="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-sequence.png" width="400/">
+
+<h4 id="部署图"><a href="#部署图" class="headerlink" title="部署图"></a>部署图</h4><img src="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-deployment.png" width="400/">
+
+<h4 id="对象图"><a href="#对象图" class="headerlink" title="对象图"></a>对象图</h4><img src="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-object.png" width="400/">
+
+<h4 id="状态图"><a href="#状态图" class="headerlink" title="状态图"></a>状态图</h4><img src="https://spring-1253868755.cos.ap-guangzhou.myqcloud.com/spring-data-jpa-state.png" width="200/">
+
+<h3 id="依赖"><a href="#依赖" class="headerlink" title="依赖"></a>依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-data-jpa<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.h2database<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>h2<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">scope</span>&gt;</span>runtime<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">optional</span>&gt;</span>true<span class="tag">&lt;/<span class="name">optional</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.joda<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>joda-money<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.jadira.usertype<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>usertype.core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>6.0.1.GA<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Entity"><a href="#Entity" class="headerlink" title="Entity"></a>Entity</h3><h4 id="BaseEntity"><a href="#BaseEntity" class="headerlink" title="BaseEntity"></a>BaseEntity</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@MappedSuperclass</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseEntity</span> <span class="keyword">implements</span> <span class="title">Serializable</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="comment">// 如果strategy采用GenerationType.IDENTITY，使用数据库的自增主键，不会生成sequence表</span></span><br><span class="line">    <span class="meta">@GeneratedValue</span></span><br><span class="line">    <span class="keyword">private</span> Long id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span>(updatable = <span class="keyword">false</span>)</span><br><span class="line">    <span class="meta">@CreationTimestamp</span></span><br><span class="line">    <span class="keyword">private</span> Date createTime;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@UpdateTimestamp</span></span><br><span class="line">    <span class="keyword">private</span> Date updateTime;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Coffee"><a href="#Coffee" class="headerlink" title="Coffee"></a>Coffee</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table</span>(name = <span class="string">"T_MENU"</span>)</span><br><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ToString</span>(callSuper = <span class="keyword">true</span>)</span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode</span>(callSuper = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Coffee</span> <span class="keyword">extends</span> <span class="title">BaseEntity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Column</span></span><br><span class="line">    <span class="meta">@Type</span>(type = <span class="string">"org.jadira.usertype.moneyandcurrency.joda.PersistentMoneyMinorAmount"</span>,</span><br><span class="line">            parameters = &#123;<span class="meta">@org</span>.hibernate.annotations.Parameter(name = <span class="string">"currencyCode"</span>, value = <span class="string">"CNY"</span>)&#125;)</span><br><span class="line">    <span class="keyword">private</span> Money price;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Order"><a href="#Order" class="headerlink" title="Order"></a>Order</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Entity</span></span><br><span class="line"><span class="meta">@Table</span>(name = <span class="string">"T_ORDER"</span>)</span><br><span class="line"><span class="meta">@Builder</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@ToString</span>(callSuper = <span class="keyword">true</span>)</span><br><span class="line"><span class="meta">@NoArgsConstructor</span></span><br><span class="line"><span class="meta">@AllArgsConstructor</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode</span>(callSuper = <span class="keyword">true</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Order</span> <span class="keyword">extends</span> <span class="title">BaseEntity</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> String customer;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@ManyToMany</span></span><br><span class="line">    <span class="meta">@JoinTable</span>(name = <span class="string">"T_ORDER_COFFEE"</span>) <span class="comment">// 映射表</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Coffee&gt; items;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Enumerated</span> <span class="comment">// 映射成integer</span></span><br><span class="line">    <span class="meta">@Column</span>(nullable = <span class="keyword">false</span>)</span><br><span class="line">    <span class="keyword">private</span> OrderState state;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> OrderState &#123;</span><br><span class="line">    INIT, PAID, BREWING, BREWED, TAKEN, CANCELLED</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="application-properties"><a href="#application-properties" class="headerlink" title="application.properties"></a>application.properties</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">spring.jpa.hibernate.ddl-auto=create-drop</span><br><span class="line">spring.jpa.properties.hibernate.show_sql=true</span><br><span class="line">spring.jpa.properties.hibernate.format_sql=true</span><br></pre></td></tr></table></figure>
+
+<h4 id="相关日志"><a href="#相关日志" class="headerlink" title="相关日志"></a>相关日志</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    drop table t_menu if exists</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    drop table t_order if exists</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    drop table t_order_coffee if exists</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    drop sequence if exists hibernate_sequence</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">Hibernate: create sequence hibernate_sequence start with 1 increment by 1</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    create table t_menu (</span><br><span class="line">       id bigint not null,</span><br><span class="line">        create_time timestamp,</span><br><span class="line">        update_time timestamp,</span><br><span class="line">        name varchar(255),</span><br><span class="line">        price bigint,</span><br><span class="line">        primary key (id)</span><br><span class="line">    )</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    create table t_order (</span><br><span class="line">       id bigint not null,</span><br><span class="line">        create_time timestamp,</span><br><span class="line">        update_time timestamp,</span><br><span class="line">        customer varchar(255),</span><br><span class="line">        state integer not null,</span><br><span class="line">        primary key (id)</span><br><span class="line">    )</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    create table t_order_coffee (</span><br><span class="line">       order_id bigint not null,</span><br><span class="line">        items_id bigint not null</span><br><span class="line">    )</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    alter table t_order_coffee</span><br><span class="line">       add constraint FKj2swxd3y69u2tfvalju7sr07q</span><br><span class="line">       foreign key (items_id)</span><br><span class="line">       references t_menu</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">    alter table t_order_coffee</span><br><span class="line">       add constraint FKjnvwi9aq5s71k7dru924mleq7</span><br><span class="line">       foreign key (order_id)</span><br><span class="line">       references t_order</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">   drop table t_menu if exists</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">   drop table t_order if exists</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">   drop table t_order_coffee if exists</span><br><span class="line">Hibernate:</span><br><span class="line"></span><br><span class="line">   drop sequence if exists hibernate_sequence</span><br></pre></td></tr></table></figure>
+
+<h3 id="Repository"><a href="#Repository" class="headerlink" title="Repository"></a>Repository</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@EnableJpaRepositories</span></span><br><span class="line"></span><br><span class="line">JpaRepository&lt;T, ID&gt; extends PagingAndSortingRepository&lt;T, ID&gt;</span><br><span class="line">PagingAndSortingRepository&lt;T, ID&gt; extends CrudRepository&lt;T, ID&gt;</span><br><span class="line">CrudRepository&lt;T, ID&gt; extends Repository&lt;T, ID&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="定义查询"><a href="#定义查询" class="headerlink" title="定义查询"></a>定义查询</h4><ol>
+<li>find..by.. / find..by.. / query..by.. / get..by..</li>
+<li>count..by..</li>
+<li>..OrderBy..[Asc/Desc]</li>
+<li>And / Or / IgnoreCase</li>
+<li>Top / First / Distinct</li>
+</ol>
+<h4 id="分页查询"><a href="#分页查询" class="headerlink" title="分页查询"></a>分页查询</h4><ol>
+<li>PagingAndSortingRepository&lt;T, ID&gt;</li>
+<li>Pageable / Sort</li>
+<li>Slice&lt;T&gt; / Page&lt;T&gt;</li>
+</ol>
+<h4 id="保存Entity"><a href="#保存Entity" class="headerlink" title="保存Entity"></a>保存Entity</h4><h5 id="CoffeeRepository"><a href="#CoffeeRepository" class="headerlink" title="CoffeeRepository"></a>CoffeeRepository</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CoffeeRepository</span> <span class="keyword">extends</span> <span class="title">CrudRepository</span>&lt;<span class="title">Coffee</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="OrderRepository"><a href="#OrderRepository" class="headerlink" title="OrderRepository"></a>OrderRepository</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OrderRepository</span> <span class="keyword">extends</span> <span class="title">CrudRepository</span>&lt;<span class="title">Order</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="SpringDataJpaApplication"><a href="#SpringDataJpaApplication" class="headerlink" title="SpringDataJpaApplication"></a>SpringDataJpaApplication</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@EnableJpaRepositories</span></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringDataJpaApplication</span> <span class="keyword">implements</span> <span class="title">ApplicationRunner</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> CoffeeRepository coffeeRepository;</span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> OrderRepository orderRepository;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        SpringApplication.run(SpringDataJpaApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(ApplicationArguments args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        initOrders();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">initOrders</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Coffee espresso = Coffee.builder().name(<span class="string">"espresso"</span>)</span><br><span class="line">                .price(Money.of(CurrencyUnit.of(<span class="string">"CNY"</span>), <span class="number">20.0</span>)).build();</span><br><span class="line">        coffeeRepository.save(espresso);</span><br><span class="line">        log.info(<span class="string">"Coffee: &#123;&#125;"</span>, espresso);</span><br><span class="line"></span><br><span class="line">        Coffee latte = Coffee.builder().name(<span class="string">"latte"</span>)</span><br><span class="line">                .price(Money.of(CurrencyUnit.of(<span class="string">"CNY"</span>), <span class="number">30.0</span>)).build();</span><br><span class="line">        coffeeRepository.save(latte);</span><br><span class="line">        log.info(<span class="string">"Coffee: &#123;&#125;"</span>, latte);</span><br><span class="line"></span><br><span class="line">        Order order = Order.builder().customer(<span class="string">"zhongmingmao"</span>)</span><br><span class="line">                .items(Arrays.asList(espresso))</span><br><span class="line">                .state(OrderState.INIT).build();</span><br><span class="line">        orderRepository.save(order);</span><br><span class="line">        log.info(<span class="string">"Order: &#123;&#125;"</span>, order);</span><br><span class="line"></span><br><span class="line">        order = Order.builder().customer(<span class="string">"zhongmingmao"</span>)</span><br><span class="line">                .items(Arrays.asList(espresso, latte))</span><br><span class="line">                .state(OrderState.INIT).build();</span><br><span class="line">        orderRepository.save(order);</span><br><span class="line">        log.info(<span class="string">"Order: &#123;&#125;"</span>, order);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="相关日志-1"><a href="#相关日志-1" class="headerlink" title="相关日志"></a>相关日志</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    call next value for hibernate_sequence</span><br><span class="line">Hibernate:</span><br><span class="line">    insert</span><br><span class="line">    into</span><br><span class="line">        t_menu</span><br><span class="line">        (create_time, update_time, name, price, id)</span><br><span class="line">    values</span><br><span class="line">        (?, ?, ?, ?, ?)</span><br><span class="line"></span><br><span class="line">Coffee: Coffee(super=BaseEntity(id=1, createTime=Sat Aug 31 14:27:26 CST 2019, updateTime=Sat Aug 31 14:27:26 CST 2019), name=espresso, price=CNY 20.00)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    call next value for hibernate_sequence</span><br><span class="line">Hibernate:</span><br><span class="line">    insert</span><br><span class="line">    into</span><br><span class="line">        t_menu</span><br><span class="line">        (create_time, update_time, name, price, id)</span><br><span class="line">    values</span><br><span class="line">        (?, ?, ?, ?, ?)</span><br><span class="line"></span><br><span class="line">Coffee: Coffee(super=BaseEntity(id=2, createTime=Sat Aug 31 14:27:26 CST 2019, updateTime=Sat Aug 31 14:27:26 CST 2019), name=latte, price=CNY 30.00)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    call next value for hibernate_sequence</span><br><span class="line">Hibernate:</span><br><span class="line">    insert</span><br><span class="line">    into</span><br><span class="line">        t_order</span><br><span class="line">        (create_time, update_time, customer, state, id)</span><br><span class="line">    values</span><br><span class="line">        (?, ?, ?, ?, ?)</span><br><span class="line">Hibernate:</span><br><span class="line">    insert</span><br><span class="line">    into</span><br><span class="line">        t_order_coffee</span><br><span class="line">        (order_id, items_id)</span><br><span class="line">    values</span><br><span class="line">        (?, ?)</span><br><span class="line"></span><br><span class="line">Order: Order(super=BaseEntity(id=3, createTime=Sat Aug 31 14:27:26 CST 2019, updateTime=Sat Aug 31 14:27:26 CST 2019), customer=zhongmingmao, items=[Coffee(super=BaseEntity(id=1, createTime=Sat Aug 31 14:27:26 CST 2019, updateTime=Sat Aug 31 14:27:26 CST 2019), name=espresso, price=CNY 20.00)], state=INIT)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    call next value for hibernate_sequence</span><br><span class="line">Hibernate:</span><br><span class="line">    insert</span><br><span class="line">    into</span><br><span class="line">        t_order</span><br><span class="line">        (create_time, update_time, customer, state, id)</span><br><span class="line">    values</span><br><span class="line">        (?, ?, ?, ?, ?)</span><br><span class="line">Hibernate:</span><br><span class="line">    insert</span><br><span class="line">    into</span><br><span class="line">        t_order_coffee</span><br><span class="line">        (order_id, items_id)</span><br><span class="line">    values</span><br><span class="line">        (?, ?)</span><br><span class="line">Hibernate:</span><br><span class="line">    insert</span><br><span class="line">    into</span><br><span class="line">        t_order_coffee</span><br><span class="line">        (order_id, items_id)</span><br><span class="line">    values</span><br><span class="line">        (?, ?)</span><br><span class="line"></span><br><span class="line">Order: Order(super=BaseEntity(id=4, createTime=Sat Aug 31 14:27:26 CST 2019, updateTime=Sat Aug 31 14:27:26 CST 2019), customer=zhongmingmao, items=[Coffee(super=BaseEntity(id=1, createTime=Sat Aug 31 14:27:26 CST 2019, updateTime=Sat Aug 31 14:27:26 CST 2019), name=espresso, price=CNY 20.00), Coffee(super=BaseEntity(id=2, createTime=Sat Aug 31 14:27:26 CST 2019, updateTime=Sat Aug 31 14:27:26 CST 2019), name=latte, price=CNY 30.00)], state=INIT)</span><br></pre></td></tr></table></figure>
+
+<h4 id="查询Entity"><a href="#查询Entity" class="headerlink" title="查询Entity"></a>查询Entity</h4><h5 id="BaseRepository"><a href="#BaseRepository" class="headerlink" title="BaseRepository"></a>BaseRepository</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@NoRepositoryBean</span> <span class="comment">// 告知Spring无需为BaseRepository创建Bean</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">BaseRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; <span class="keyword">extends</span> <span class="title">PagingAndSortingRepository</span>&lt;<span class="title">T</span>, <span class="title">ID</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">List&lt;T&gt; <span class="title">findTop3ByOrderByUpdateTimeDescIdAsc</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="CoffeeRepository-1"><a href="#CoffeeRepository-1" class="headerlink" title="CoffeeRepository"></a>CoffeeRepository</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">CoffeeRepository</span> <span class="keyword">extends</span> <span class="title">BaseRepository</span>&lt;<span class="title">Coffee</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="OrderRepository-1"><a href="#OrderRepository-1" class="headerlink" title="OrderRepository"></a>OrderRepository</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">OrderRepository</span> <span class="keyword">extends</span> <span class="title">BaseRepository</span>&lt;<span class="title">Order</span>, <span class="title">Long</span>&gt; </span>&#123;</span><br><span class="line">    <span class="function">List&lt;Order&gt; <span class="title">findByCustomerOrderById</span><span class="params">(String customer)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function">List&lt;Order&gt; <span class="title">findByItems_Name</span><span class="params">(String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="SpringDataJpaApplication-1"><a href="#SpringDataJpaApplication-1" class="headerlink" title="SpringDataJpaApplication"></a>SpringDataJpaApplication</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">findOrders</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    coffeeRepository.findAll(Sort.by(Sort.Direction.DESC, <span class="string">"id"</span>))</span><br><span class="line">            .forEach(coffee -&gt; log.info(<span class="string">"Loading &#123;&#125;"</span>, coffee));</span><br><span class="line"></span><br><span class="line">    List&lt;Order&gt; orders = orderRepository.findTop3ByOrderByUpdateTimeDescIdAsc();</span><br><span class="line">    log.info(<span class="string">"findTop3ByOrderByUpdateTimeDescIdAsc: &#123;&#125;"</span>, getJoinedOrderId(orders));</span><br><span class="line"></span><br><span class="line">    orders = orderRepository.findByCustomerOrderById(<span class="string">"zhongmingmao"</span>);</span><br><span class="line">    log.info(<span class="string">"findByCustomerOrderById: &#123;&#125;"</span>, getJoinedOrderId(orders));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 不开启事务会因为没有Session而报LazyInitializationException</span></span><br><span class="line">    <span class="comment">// run方法加上@Transactional注解</span></span><br><span class="line">    orders.forEach(order -&gt; &#123;</span><br><span class="line">        log.info(<span class="string">"Order: &#123;&#125;"</span>, order.getId());</span><br><span class="line">        order.getItems().forEach(coffee -&gt; log.info(<span class="string">" Item &#123;&#125;"</span>, coffee));</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    orders = orderRepository.findByItems_Name(<span class="string">"latte"</span>);</span><br><span class="line">    log.info(<span class="string">"findByItems_Name: &#123;&#125;"</span>, getJoinedOrderId(orders));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> String <span class="title">getJoinedOrderId</span><span class="params">(List&lt;Order&gt; orders)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> orders.stream().map(order -&gt; order.getId().toString()).collect(Collectors.joining(<span class="string">","</span>));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="相关日志-2"><a href="#相关日志-2" class="headerlink" title="相关日志"></a>相关日志</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    select</span><br><span class="line">        coffee0_.id as id1_0_,</span><br><span class="line">        coffee0_.create_time as create_t2_0_,</span><br><span class="line">        coffee0_.update_time as update_t3_0_,</span><br><span class="line">        coffee0_.name as name4_0_,</span><br><span class="line">        coffee0_.price as price5_0_</span><br><span class="line">    from</span><br><span class="line">        t_menu coffee0_</span><br><span class="line">    order by</span><br><span class="line">        coffee0_.id desc</span><br><span class="line"></span><br><span class="line">Loading Coffee(super=BaseEntity(id=2, createTime=Sat Aug 31 15:03:49 CST 2019, updateTime=Sat Aug 31 15:03:49 CST 2019), name=latte, price=CNY 30.00)</span><br><span class="line">Loading Coffee(super=BaseEntity(id=1, createTime=Sat Aug 31 15:03:49 CST 2019, updateTime=Sat Aug 31 15:03:49 CST 2019), name=espresso, price=CNY 20.00)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    select</span><br><span class="line">        order0_.id as id1_1_,</span><br><span class="line">        order0_.create_time as create_t2_1_,</span><br><span class="line">        order0_.update_time as update_t3_1_,</span><br><span class="line">        order0_.customer as customer4_1_,</span><br><span class="line">        order0_.state as state5_1_</span><br><span class="line">    from</span><br><span class="line">        t_order order0_</span><br><span class="line">    order by</span><br><span class="line">        order0_.update_time desc,</span><br><span class="line">        order0_.id asc limit ?</span><br><span class="line"></span><br><span class="line">findTop3ByOrderByUpdateTimeDescIdAsc: 4,3</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    select</span><br><span class="line">        order0_.id as id1_1_,</span><br><span class="line">        order0_.create_time as create_t2_1_,</span><br><span class="line">        order0_.update_time as update_t3_1_,</span><br><span class="line">        order0_.customer as customer4_1_,</span><br><span class="line">        order0_.state as state5_1_</span><br><span class="line">    from</span><br><span class="line">        t_order order0_</span><br><span class="line">    where</span><br><span class="line">        order0_.customer=?</span><br><span class="line">    order by</span><br><span class="line">        order0_.id asc</span><br><span class="line"></span><br><span class="line">findByCustomerOrderById: 3,4</span><br><span class="line">Order: 3</span><br><span class="line"> Item Coffee(super=BaseEntity(id=1, createTime=Sat Aug 31 15:03:49 CST 2019, updateTime=Sat Aug 31 15:03:49 CST 2019), name=espresso, price=CNY 20.00)</span><br><span class="line">Order: 4</span><br><span class="line"> Item Coffee(super=BaseEntity(id=1, createTime=Sat Aug 31 15:03:49 CST 2019, updateTime=Sat Aug 31 15:03:49 CST 2019), name=espresso, price=CNY 20.00)</span><br><span class="line"> Item Coffee(super=BaseEntity(id=2, createTime=Sat Aug 31 15:03:49 CST 2019, updateTime=Sat Aug 31 15:03:49 CST 2019), name=latte, price=CNY 30.00)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Hibernate:</span><br><span class="line">    select</span><br><span class="line">        order0_.id as id1_1_,</span><br><span class="line">        order0_.create_time as create_t2_1_,</span><br><span class="line">        order0_.update_time as update_t3_1_,</span><br><span class="line">        order0_.customer as customer4_1_,</span><br><span class="line">        order0_.state as state5_1_</span><br><span class="line">    from</span><br><span class="line">        t_order order0_</span><br><span class="line">    left outer join</span><br><span class="line">        t_order_coffee items1_</span><br><span class="line">            on order0_.id=items1_.order_id</span><br><span class="line">    left outer join</span><br><span class="line">        t_menu coffee2_</span><br><span class="line">            on items1_.items_id=coffee2_.id</span><br><span class="line">    where</span><br><span class="line">        coffee2_.name=?</span><br><span class="line"></span><br><span class="line">findByItems_Name: 4</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+      
+
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/08/21/spring-mybatis/" rel="bookmark">Spring -- MyBatis</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/08/27/spring-docker/" rel="bookmark">Spring -- Docker</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/30/spring-druid/" rel="bookmark">Spring -- Druid</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/23/spring-hello-spring/" rel="bookmark">Spring -- HelloSpring</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/29/spring-hikaricp/" rel="bookmark">Spring -- HikariCP</a></div>
+      
+    </li>
+  
+  </ul>
+
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhongmingmao</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://zhongmingmao.me/2019/08/17/spring-spring-data-jpa/" title="Spring -- Spring Data JPA">http://zhongmingmao.me/2019/08/17/spring-spring-data-jpa/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"><i class="fa fa-tag"></i> Spring</a>
+          
+            <a href="/tags/spring-boot/" rel="tag"><i class="fa fa-tag"></i> Spring Boot</a>
+          
+            <a href="/tags/o-r-mapping/" rel="tag"><i class="fa fa-tag"></i> O/R Mapping</a>
+          
+            <a href="/tags/jpa/" rel="tag"><i class="fa fa-tag"></i> JPA</a>
+          
+            <a href="/tags/spring-data/" rel="tag"><i class="fa fa-tag"></i> Spring Data</a>
+          
+            <a href="/tags/spring-data-jpa/" rel="tag"><i class="fa fa-tag"></i> Spring Data JPA</a>
+          
+            <a href="/tags/hibernate/" rel="tag"><i class="fa fa-tag"></i> Hibernate</a>
+          
+            <a href="/tags/uml/" rel="tag"><i class="fa fa-tag"></i> UML</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/16/kafka-producer-manage-tcp-connection/" rel="next" title="Kafka -- 生产者管理TCP连接">
+                <i class="fa fa-chevron-left"></i> Kafka -- 生产者管理TCP连接
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/18/java-performance-lock-opt/" rel="prev" title="Java性能 -- Lock优化">
+                Java性能 -- Lock优化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg" alt="zhongmingmao">
+            
+              <p class="site-author-name" itemprop="name">zhongmingmao</p>
+              <div class="site-description motion-element" itemprop="description">懦夫从不启程</div>
+          </div>
+
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhongmingmao0625@gmail.com" title="E-Mail &rarr; mailto:zhongmingmao0625@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+             <div class="cc-license motion-element" itemprop="license">
+              
+              
+                
+              
+              
+              
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+             </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#O-R-Mapping"><span class="nav-number">1.</span> <span class="nav-text">O/R Mapping</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hibernate"><span class="nav-number">2.</span> <span class="nav-text">Hibernate</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">2.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发展历程"><span class="nav-number">2.2.</span> <span class="nav-text">发展历程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JPA"><span class="nav-number">3.</span> <span class="nav-text">JPA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spring-Data"><span class="nav-number">4.</span> <span class="nav-text">Spring Data</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JPA注解"><span class="nav-number">5.</span> <span class="nav-text">JPA注解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SpringBucks"><span class="nav-number">6.</span> <span class="nav-text">SpringBucks</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#UML"><span class="nav-number">6.1.</span> <span class="nav-text">UML</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#时序图"><span class="nav-number">6.1.1.</span> <span class="nav-text">时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#部署图"><span class="nav-number">6.1.2.</span> <span class="nav-text">部署图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象图"><span class="nav-number">6.1.3.</span> <span class="nav-text">对象图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#状态图"><span class="nav-number">6.1.4.</span> <span class="nav-text">状态图</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖"><span class="nav-number">6.2.</span> <span class="nav-text">依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Entity"><span class="nav-number">6.3.</span> <span class="nav-text">Entity</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#BaseEntity"><span class="nav-number">6.3.1.</span> <span class="nav-text">BaseEntity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Coffee"><span class="nav-number">6.3.2.</span> <span class="nav-text">Coffee</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Order"><span class="nav-number">6.3.3.</span> <span class="nav-text">Order</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#application-properties"><span class="nav-number">6.3.4.</span> <span class="nav-text">application.properties</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#相关日志"><span class="nav-number">6.3.5.</span> <span class="nav-text">相关日志</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Repository"><span class="nav-number">6.4.</span> <span class="nav-text">Repository</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#定义查询"><span class="nav-number">6.4.1.</span> <span class="nav-text">定义查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分页查询"><span class="nav-number">6.4.2.</span> <span class="nav-text">分页查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#保存Entity"><span class="nav-number">6.4.3.</span> <span class="nav-text">保存Entity</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#CoffeeRepository"><span class="nav-number">6.4.3.1.</span> <span class="nav-text">CoffeeRepository</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#OrderRepository"><span class="nav-number">6.4.3.2.</span> <span class="nav-text">OrderRepository</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SpringDataJpaApplication"><span class="nav-number">6.4.3.3.</span> <span class="nav-text">SpringDataJpaApplication</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#相关日志-1"><span class="nav-number">6.4.3.4.</span> <span class="nav-text">相关日志</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询Entity"><span class="nav-number">6.4.4.</span> <span class="nav-text">查询Entity</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#BaseRepository"><span class="nav-number">6.4.4.1.</span> <span class="nav-text">BaseRepository</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CoffeeRepository-1"><span class="nav-number">6.4.4.2.</span> <span class="nav-text">CoffeeRepository</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#OrderRepository-1"><span class="nav-number">6.4.4.3.</span> <span class="nav-text">OrderRepository</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SpringDataJpaApplication-1"><span class="nav-number">6.4.4.4.</span> <span class="nav-text">SpringDataJpaApplication</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#相关日志-2"><span class="nav-number">6.4.4.5.</span> <span class="nav-text">相关日志</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhongmingmao</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">1.9m</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">58:48</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.2</div>
+
+
+
+
+        
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=61684383";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fastclick@1/lib/fastclick.min.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery_lazyload@1/jquery.lazyload.min.js"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.pack.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1.1/reading_progress.min.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.2"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  
+  
+
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.json";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz',
+                'X-LC-Key': 'Vfku3wPjnVYyHe33mjB6bJXY',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+    
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-bookmark@1/bookmark.min.js"></script>
+  <script>
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+<script>
+  $('.highlight').not('.gist .highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      const selection = document.getSelection();
+      const selected = selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+        if (result) $(this).text('复制成功');
+        else $(this).text('复制失败');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+      if (selected) {
+        selection.removeAllRanges();
+        selection.addRange(selected);
+      }
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

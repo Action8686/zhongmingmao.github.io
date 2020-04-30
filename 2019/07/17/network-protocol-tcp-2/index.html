@@ -1,0 +1,1692 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+      
+    
+    
+      
+    
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+  <meta name="msvalidate.01" content="1699A46CB5242072D8403C073F576423">
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/dragon/dragon-apple-touch-icon.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/dragon/dragon-favicon-32x32.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/dragon/dragon-favicon-16x16.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/dragon/dragon-logo.svg?v=7.1.2" color="#222">
+
+
+
+  <meta name="msapplication-config" content="/images/dragon/dragon-browserconfig.xml">
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.2',
+    sidebar: {"position":"right","width":180,"display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: true,
+    lazyload: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="累计应答 为了保证顺序性，每一个包都有一个ID（序号），在建立连接的时候，会商定起始的ID是多少，然后按照ID一个个发送 为了保证不丢包，对应发送的包都要进行应答，但不是一个个应答，而是会应答某个之前的ID，该模式称为累计应答">
+<meta name="keywords" content="Network,TCP,Network Protocol">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络协议 -- TCP下">
+<meta property="og:url" content="http://zhongmingmao.me/2019/07/17/network-protocol-tcp-2/index.html">
+<meta property="og:site_name" content="点滴积累">
+<meta property="og:description" content="累计应答 为了保证顺序性，每一个包都有一个ID（序号），在建立连接的时候，会商定起始的ID是多少，然后按照ID一个个发送 为了保证不丢包，对应发送的包都要进行应答，但不是一个个应答，而是会应答某个之前的ID，该模式称为累计应答">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-sender-cache.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-receiver-cache.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-1.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-2.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-3.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-4.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-5.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-6.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-7.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-congestion-control-1.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-congestion-control-2.png">
+<meta property="og:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-congestion-control-bbr.png">
+<meta property="og:updated_time" content="2020-04-30T05:35:06.478Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="网络协议 -- TCP下">
+<meta name="twitter:description" content="累计应答 为了保证顺序性，每一个包都有一个ID（序号），在建立连接的时候，会商定起始的ID是多少，然后按照ID一个个发送 为了保证不丢包，对应发送的包都要进行应答，但不是一个个应答，而是会应答某个之前的ID，该模式称为累计应答">
+<meta name="twitter:image" content="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-sender-cache.png">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="点滴积累" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="http://zhongmingmao.me/2019/07/17/network-protocol-tcp-2/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>网络协议 -- TCP下 | 点滴积累</title>
+  
+
+
+
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97268729-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-97268729-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fad94c1137504ba7685443e9d1f2abe9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">点滴积累</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">127</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">38</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">352</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhongmingmao.me/2019/07/17/network-protocol-tcp-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhongmingmao">
+      <meta itemprop="description" content="懦夫从不启程">
+      <meta itemprop="image" content="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点滴积累">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">网络协议 -- TCP下
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-17 15:14:56" itemprop="dateCreated datePublished" datetime="2019-07-17T15:14:56+08:00">2019-07-17</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/network/" itemprop="url" rel="index"><span itemprop="name">Network</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/network/protocol/" itemprop="url" rel="index"><span itemprop="name">Protocol</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/07/17/network-protocol-tcp-2/" class="leancloud_visitors" data-flag-title="网络协议 -- TCP下">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">3.7k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">7 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="累计应答"><a href="#累计应答" class="headerlink" title="累计应答"></a>累计应答</h2><ol>
+<li>为了保证<strong>顺序性</strong>，每一个包都有一个<strong>ID</strong>（序号），在建立连接的时候，会商定起始的ID是多少，然后按照ID一个个发送</li>
+<li>为了保证不丢包，对应发送的包都要进行应答，但不是一个个应答，而是会<strong>应答某个之前的ID</strong>，该模式称为<strong>累计应答</strong></li>
+</ol>
+<a id="more"></a>
+
+<h2 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h2><p>为了记录所有发送的包和接收的包，TCP需要发送端和接收端分别用<strong>缓存</strong>来保存这些记录</p>
+<h3 id="发送端"><a href="#发送端" class="headerlink" title="发送端"></a>发送端</h3><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-sender-cache.png" width="1000/">
+
+<ol>
+<li>发送端的缓存是按照包的ID一个个排列的，根据处理的情况分为四部分<ul>
+<li><strong>已经发送 + 已经确认</strong></li>
+<li><strong>已经发送 + 等待确认</strong></li>
+<li><strong>可以发送 + 等待发送</strong></li>
+<li><strong>不能发送</strong></li>
+</ul>
+</li>
+<li>在TCP里，接收端会给发送端报一个<strong>窗口</strong>的大小，称为<strong>Advertised window</strong><ul>
+<li>Advertised window的大小应该等于上面第2部分+第3部分</li>
+<li><strong>Advertised window表征接收端的处理能力</strong>，超过该窗口大小，接收端处理不过来</li>
+</ul>
+</li>
+<li>分界线<ul>
+<li>LastByteAcked：第1部分和第2部分的分界线</li>
+<li>LastByteSent：第2部分和第3部分的分界线</li>
+<li><strong>LastByteAcked + AdvertisedWindow</strong>：第3部分和第4部分的分界线</li>
+</ul>
+</li>
+</ol>
+<h3 id="接收端"><a href="#接收端" class="headerlink" title="接收端"></a>接收端</h3><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-receiver-cache.png" width="1000/">
+
+<ol>
+<li>根据处理情况分为三部分<ul>
+<li><strong>已经接收 + 已经确认</strong></li>
+<li><strong>等待接收 + 尚未确认</strong></li>
+<li><strong>不能接收</strong></li>
+</ul>
+</li>
+<li>常用计算<ul>
+<li>MaxRcvBuffer：最大缓存的量</li>
+<li>LastByteRead之后：已经接收，但还没有被应用层读取</li>
+<li>NextByteExpected：第1部分和第2部分的分界线</li>
+<li><em><strong>AdvertisedWindow = MaxRcvBuffer - (NextByteExpected - LastByteRead)</strong></em></li>
+<li><em><strong>NextByteExpected + AdvertisedWindow = LastByteRead + MaxRcvBuffer</strong></em> ：第2部分和第3部分的分界线</li>
+</ul>
+</li>
+<li>在第2部分，由于收到的包可能是<strong>乱序</strong>的，会出现空隙，只有<strong>和第1部分连续</strong>的，才能马上进行回复<ul>
+<li>中间空着的部分需要<strong>等待</strong>，哪怕后面的包已经来了</li>
+</ul>
+</li>
+</ol>
+<h2 id="顺序-丢包"><a href="#顺序-丢包" class="headerlink" title="顺序 + 丢包"></a>顺序 + 丢包</h2><ol>
+<li>发送端缓存<ul>
+<li>1、2、3：已经发送并确认</li>
+<li>4、5、6、7、8、9：都是发送了未确认</li>
+<li>10、11、12：还未发送出去</li>
+<li>13、14、15：接收端没有空间，不准备发送</li>
+</ul>
+</li>
+<li>接收端缓存<ul>
+<li>1、2、3、4、5：已经完成ACK，但没有读取</li>
+<li>6、7：等待接收</li>
+<li>8、9：已经接收，但没有ACK</li>
+</ul>
+</li>
+<li>当前状态<ul>
+<li>1、2、3：没有问题，双方达成一致</li>
+<li>4、5：接收端ACK，发送端还没收到，有可能是丢了，也有可能在路上</li>
+<li>6、7、8、9：发送端都已经发送，到接收端只收到了8、9，而6、7还没到，出现了<strong>乱序</strong>，虽然缓存了8、9但没法ACK</li>
+<li>可见，顺序问题和丢包问题都有可能发生，因此需要考虑<strong>确认</strong>和<strong>重传</strong>机制<ul>
+<li>如果4的ACK到了，5的ACK丢了，怎么处理？</li>
+<li>如果6、7的数据包丢了，怎么处理？</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="超时重传"><a href="#超时重传" class="headerlink" title="超时重传"></a>超时重传</h3><ol>
+<li>对每一个<strong>已经发送但尚未确认</strong>的包，都有一个<strong>定时器</strong>，超过一定时间，就重新尝试<ul>
+<li>不宜过长，这样超时时间会变长，访问变慢</li>
+<li>不宜过短，必须<strong>大于</strong>往返时间<strong>RTT</strong>，否则会引起<strong>不必要的重传</strong><ul>
+<li>TCP通过<strong>采样RTT</strong>，然后进行加权平均，该值是<strong>动态变化</strong>的</li>
+<li>除了采样RTT，还要采样RTT的<strong>波动范围</strong>，计算出一个估计的超时时间</li>
+<li>由于重传时间是动态变化的，因此也称为<em><strong>自适应重传算法</strong></em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>如果过段时间后，5、6、7都超时了，就会重新发送，接收端发现5原来接收过，直接丢弃<ul>
+<li>6到了，发送ACK，要求下一个是7，但7又丢失了，当7再次超时，需要重传的时候，TCP的策略是<em><strong>超时间隔加倍</strong></em></li>
+</ul>
+</li>
+<li>每当遇到一次超时重传的时候，都会将下一次超时重传间隔设置为先前值的<em><strong>两倍</strong></em><ul>
+<li>两次超时，说明网络环境很差，不宜频繁反复发送</li>
+</ul>
+</li>
+<li>超时间隔加倍的策略存在的问题：<strong>超时周期可能相对较长</strong>，需要一个补充机制：<em><strong>快速重传</strong></em></li>
+<li><strong>快速重传</strong><ul>
+<li>当接收端<strong>收到一个序号大于下一个所预期的报文段</strong>时，就检测到数据流中的<strong>空隙</strong>，于是发送<strong>3个冗余的ACK</strong></li>
+<li>客户端收到后，会在定时器<strong>过期之前</strong>，重传丢失的报文段</li>
+<li>例如接收端发现6、8、9都已经收到了，但是所预期的7却没有来，明显是丢失了<ul>
+<li>于是发送3个6的ACK，要求下一个是7，客户端收到后，不等定时器超时，<strong>马上重发</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="流量控制"><a href="#流量控制" class="headerlink" title="流量控制"></a>流量控制</h2><p><strong>在对数据包的ACK中，同时会携带一个窗口的大小</strong>，假设窗口大小不变，依然为9，4的ACK到达，会右移一位，13也可以发送了<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-1.png" width="1000/"></p>
+<p>如果此时发送端发送很快，会将10、11、12、13全部发送完毕，之后就停止发送了，因为可发送的部分为0<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-2.png" width="1000/"></p>
+<p>当5的ACK到达时，在客户端相当于窗口再向右滑动一格，14可以发送了<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-3.png" width="1000/"></p>
+<p>如果接收端处理太慢，导致缓存中没有空间，可以通过ACK携带<strong>修改窗口大小</strong>的信息，可以设置为0，那么发送端将停止发送<br>例如接收端的应用一直不读取缓存中的数据，当6确认后，窗口大小需要缩小为8<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-4.png" width="1000/"></p>
+<p>新的窗口大小8通过6的ACK到达发送端的时候，不会平行右移，而是仅仅右移左面的边，把窗口大小从9改为8<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-5.png" width="1000/"></p>
+<p>如果接收端还是一直不处理数据，随着确认包越来越多，窗口越来越小，直到为0<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-6.png" width="1000/"></p>
+<p>新的窗口大小0通过14的ACK到达发送端，发送端也将窗口调整为0，停止发送<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-flow-control-7.png" width="1000/"></p>
+<p>这种情况下，发送端会定时发送窗口<strong>探测数据包</strong>，看是否有机会调整窗口的大小<br>当接收方比较慢时，要防止<strong>低能窗口综合征</strong>：不要空出一个字节就立马告诉发送端，然后马上又被填满了<br>当窗口太小的时候，不更新窗口，直到达到一定大小，或者缓冲区一半为空，才更新窗口</p>
+<h2 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h2><ol>
+<li><strong>rwnd</strong>（Receiver Window）：<strong>滑动窗口</strong>，担心发送方把接收方缓存塞满</li>
+<li><strong>cwnd</strong>（Congestion Window）：<strong>拥塞窗口</strong>，担心把网络塞满</li>
+<li>通过滑动窗口和拥塞窗口共同<strong>控制发送的速度</strong><ul>
+<li><em><strong>LastByteSent - LastByteAcked &lt;= min {cwnd, rwnd}</strong></em></li>
+</ul>
+</li>
+<li>对于TCP协议来说，它压根不知道整个网络都经历了什么，<strong>网络对于TCP来说是一个黑盒</strong></li>
+<li><em><strong>TCP拥塞控制就是在不堵塞、不丢包的情况下，尽量发挥带宽</strong></em></li>
+<li>在网络上，<strong>通道的容量 = 带宽 * 往返时间</strong></li>
+</ol>
+<p>设置<strong>发送窗口</strong>，使得<strong>发送但未确认</strong>的包为<strong>通道的容量</strong>，就能<strong>撑满</strong>整个通道<br>假设往返时间为8秒，每秒发送一个包，每个包的大小为1KB<br>已经过去8秒，8个包都已经发出去，前4个包到达接收端，但ACK还没有返回，后4个包还在路上，还没被接收<br><img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-congestion-control-1.png" width="600/"></p>
+<p>如果<strong>调大窗口</strong>，使得单位时间内可以发送更多的包<br>原来发送一个包，从一端到达另一端，假设一共经过4个设备，每个设备处理一个包需要耗时1S，所以到达另一端需要耗费4S<br>如果发送加快，则单位时间内会有更多的包到达这些中间设备，如果这些设备还只能每秒处理一个包的话，多出来的包会被<strong>丢弃</strong><br>如果中间设备增加<strong>缓存</strong>，处理不过来的包会<strong>排队</strong>，这样包就不会丢失了，但缺点是会<strong>增加时延</strong>，时延到达一定程度，就会<strong>超时重传</strong><br>所以，拥塞控制主要避免两种现象：<strong>包丢失</strong>、<strong>超时重传</strong>，一旦出现这些现象，说明发送速度太快</p>
+<h3 id="慢启动"><a href="#慢启动" class="headerlink" title="慢启动"></a>慢启动</h3><ol>
+<li>一条TCP连接开始，cwnd设置为1，一次只能发送一个</li>
+<li>当这一个的确认到来的时候，每个确认cwnd加1，此时一次能够发送2个</li>
+<li>当这两个的确认到来的时候，每个确认cwnd加1，两个确认cwnd加2，此时一次能够发送4个</li>
+<li>当这四个的确认到来的时候，每个确认cwnd加1，四个确认cwnd加4，此时一次能够发送8个，<strong>指数型增长</strong><ul>
+<li>ssthresh=65535 Byte，当超过<strong>ssthresh</strong>，每收到一个确认，cwnd增加<strong>1/cwnd</strong></li>
+</ul>
+</li>
+<li>当这八个的确认到来的时候，每个确认cwnd加1/8，八个确认cwnd加1，此时一次能够发送9个，变成了<strong>线性增长</strong></li>
+<li>线性增长还是会增长，还是有可能会出现网络拥塞，拥塞的一种表现形式就是<strong>丢包</strong>，需要<strong>超时重传</strong><ul>
+<li>此时<strong>将ssthresh设为cwnd/2，将cwnd设为1，重新开始慢启动</strong></li>
+<li>一旦超时重传，马上回到解放前，过于<strong>激进</strong>，会造成<strong>网络卡顿</strong></li>
+</ul>
+</li>
+</ol>
+<h3 id="快速重传算法"><a href="#快速重传算法" class="headerlink" title="快速重传算法"></a>快速重传算法</h3><ol>
+<li>当接收端发现丢了一个<strong>中间包</strong>的时候，会发送3次前一个包的ACK，于是发送端会<strong>快速的重传</strong>，不必等待超时再重传</li>
+<li>TCP认为这种情况<strong>不严重</strong>，因为<strong>大部分没丢</strong>，只丢了中间一部分，将<strong>cwnd减半为cwnd/2，然后ssthresh=cwnd</strong><ul>
+<li>当3个包返回的时候，cwnd=ssthresh+3，也就是还在<strong>比较高</strong>的值，呈<strong>线性增长</strong></li>
+</ul>
+</li>
+</ol>
+<img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-congestion-control-2.png" width="1000/">
+
+<h3 id="BBR拥塞算法"><a href="#BBR拥塞算法" class="headerlink" title="BBR拥塞算法"></a>BBR拥塞算法</h3><ol>
+<li>TCP拥塞控制主要用来避免<strong>丢包</strong>和<strong>超时重传</strong>，但这两个现象都是有问题的<ul>
+<li><strong>丢包并不能代表通道是满的</strong>，例如公网上<strong>带宽不满也会丢包</strong>，此时不能认为网络拥塞并且退缩</li>
+<li>TCP的拥塞控制要等到<strong>中间设备的缓存</strong>都被填充满了，才会发生丢包，从而降低速度<ul>
+<li>其实TCP<strong>只要填满网络通道</strong>即可，不需要等到把所有的中间设备的缓存都填满</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>为了优化上面的两个问题，诞生了<strong>TCP BBR拥塞算法</strong><ul>
+<li>它企图找到一个<strong>平衡点</strong>，通过不断的加快发送速度，将通道填满，但不填满中间设备的缓存（这样会增加时延）</li>
+<li>这个平衡点可以很好地达到<strong>高带宽</strong>和<strong>低延时</strong>的平衡</li>
+</ul>
+</li>
+</ol>
+<img src="https://network-protocol-1253868755.cos.ap-guangzhou.myqcloud.com/network-protocol-tcp-congestion-control-bbr.png" width="1000/">
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
+<li><strong>滑动窗口</strong>（rwnd）解决的问题：<strong>顺序问题、丢包问题、流量控制</strong></li>
+<li><strong>拥塞窗口</strong>（cwnd）解决的问题：<strong>拥塞控制</strong></li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/26/network-protocol-http/" rel="bookmark">网络协议 -- HTTP</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/16/network-protocol-tcp-1/" rel="bookmark">网络协议 -- TCP上</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/08/28/network-programming-tcp-3-way-handshake/" rel="bookmark">网络编程 -- TCP三次握手</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/08/04/network-protocol-ca/" rel="bookmark">网络协议 -- CA证书签署</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/05/29/network-protocol-dhcp/" rel="bookmark">网络协议 -- DHCP</a></div>
+      
+    </li>
+  
+  </ul>
+
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhongmingmao</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://zhongmingmao.me/2019/07/17/network-protocol-tcp-2/" title="网络协议 -- TCP下">http://zhongmingmao.me/2019/07/17/network-protocol-tcp-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/network/" rel="tag"><i class="fa fa-tag"></i> Network</a>
+          
+            <a href="/tags/tcp/" rel="tag"><i class="fa fa-tag"></i> TCP</a>
+          
+            <a href="/tags/network-protocol/" rel="tag"><i class="fa fa-tag"></i> Network Protocol</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/16/network-protocol-tcp-1/" rel="next" title="网络协议 -- TCP上">
+                <i class="fa fa-chevron-left"></i> 网络协议 -- TCP上
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/18/java-performance-hashmap/" rel="prev" title="Java性能 -- HashMap">
+                Java性能 -- HashMap <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg" alt="zhongmingmao">
+            
+              <p class="site-author-name" itemprop="name">zhongmingmao</p>
+              <div class="site-description motion-element" itemprop="description">懦夫从不启程</div>
+          </div>
+
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhongmingmao0625@gmail.com" title="E-Mail &rarr; mailto:zhongmingmao0625@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+             <div class="cc-license motion-element" itemprop="license">
+              
+              
+                
+              
+              
+              
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+             </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#累计应答"><span class="nav-number">1.</span> <span class="nav-text">累计应答</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#缓存"><span class="nav-number">2.</span> <span class="nav-text">缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#发送端"><span class="nav-number">2.1.</span> <span class="nav-text">发送端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接收端"><span class="nav-number">2.2.</span> <span class="nav-text">接收端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序-丢包"><span class="nav-number">3.</span> <span class="nav-text">顺序 + 丢包</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#超时重传"><span class="nav-number">3.1.</span> <span class="nav-text">超时重传</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流量控制"><span class="nav-number">4.</span> <span class="nav-text">流量控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拥塞控制"><span class="nav-number">5.</span> <span class="nav-text">拥塞控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#慢启动"><span class="nav-number">5.1.</span> <span class="nav-text">慢启动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#快速重传算法"><span class="nav-number">5.2.</span> <span class="nav-text">快速重传算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BBR拥塞算法"><span class="nav-number">5.3.</span> <span class="nav-text">BBR拥塞算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhongmingmao</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">1.9m</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">58:48</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.2</div>
+
+
+
+
+        
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=61684383";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fastclick@1/lib/fastclick.min.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery_lazyload@1/jquery.lazyload.min.js"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.pack.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1.1/reading_progress.min.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.2"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  
+  
+
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.json";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz',
+                'X-LC-Key': 'Vfku3wPjnVYyHe33mjB6bJXY',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+    
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-bookmark@1/bookmark.min.js"></script>
+  <script>
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+<script>
+  $('.highlight').not('.gist .highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      const selection = document.getSelection();
+      const selected = selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+        if (result) $(this).text('复制成功');
+        else $(this).text('复制失败');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+      if (selected) {
+        selection.removeAllRanges();
+        selection.addRange(selected);
+      }
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

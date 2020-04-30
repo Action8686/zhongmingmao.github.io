@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+      
+    
+    
+      
+    
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+  <meta name="msvalidate.01" content="1699A46CB5242072D8403C073F576423">
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/dragon/dragon-apple-touch-icon.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/dragon/dragon-favicon-32x32.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/dragon/dragon-favicon-16x16.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/dragon/dragon-logo.svg?v=7.1.2" color="#222">
+
+
+
+  <meta name="msapplication-config" content="/images/dragon/dragon-browserconfig.xml">
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.2',
+    sidebar: {"position":"right","width":180,"display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: true,
+    lazyload: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="数据集 下载链接：cal_housing 数据集格式 longitude：区域中心的纬度 latitude：区域中心的经度 housingMedianAge：区域内所有房屋年龄的中位数 totalRooms：区域内总房间数 totalBedrooms：区域内总卧室数 population：区域内总人口数 households：区域内总家庭数 medianIncome：区域内人均收入中位数 medi">
+<meta name="keywords" content="Big Data,Spark,Linear Regression">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据 -- 线性回归">
+<meta property="og:url" content="http://zhongmingmao.me/2019/07/11/big-data-linear-regression/index.html">
+<meta property="og:site_name" content="点滴积累">
+<meta property="og:description" content="数据集 下载链接：cal_housing 数据集格式 longitude：区域中心的纬度 latitude：区域中心的经度 housingMedianAge：区域内所有房屋年龄的中位数 totalRooms：区域内总房间数 totalBedrooms：区域内总卧室数 population：区域内总人口数 households：区域内总家庭数 medianIncome：区域内人均收入中位数 medi">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2020-04-30T05:35:06.458Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="大数据 -- 线性回归">
+<meta name="twitter:description" content="数据集 下载链接：cal_housing 数据集格式 longitude：区域中心的纬度 latitude：区域中心的经度 housingMedianAge：区域内所有房屋年龄的中位数 totalRooms：区域内总房间数 totalBedrooms：区域内总卧室数 population：区域内总人口数 households：区域内总家庭数 medianIncome：区域内人均收入中位数 medi">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="点滴积累" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="http://zhongmingmao.me/2019/07/11/big-data-linear-regression/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>大数据 -- 线性回归 | 点滴积累</title>
+  
+
+
+
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97268729-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-97268729-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fad94c1137504ba7685443e9d1f2abe9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">点滴积累</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">127</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">38</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">352</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhongmingmao.me/2019/07/11/big-data-linear-regression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhongmingmao">
+      <meta itemprop="description" content="懦夫从不启程">
+      <meta itemprop="image" content="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点滴积累">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据 -- 线性回归
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-11 20:51:12" itemprop="dateCreated datePublished" datetime="2019-07-11T20:51:12+08:00">2019-07-11</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/big-data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/big-data/spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/07/11/big-data-linear-regression/" class="leancloud_visitors" data-flag-title="大数据 -- 线性回归">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">8.8k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">16 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="数据集"><a href="#数据集" class="headerlink" title="数据集"></a>数据集</h2><ol>
+<li>下载链接：<a href="http://www.dcc.fc.up.pt/~ltorgo/Regression/cal_housing.html" target="_blank" rel="noopener">cal_housing</a></li>
+<li>数据集格式<ul>
+<li>longitude：区域中心的纬度</li>
+<li>latitude：区域中心的经度</li>
+<li>housingMedianAge：区域内所有房屋年龄的中位数</li>
+<li>totalRooms：区域内总房间数</li>
+<li>totalBedrooms：区域内总卧室数</li>
+<li>population：区域内总人口数</li>
+<li>households：区域内总家庭数</li>
+<li>medianIncome：区域内人均收入中位数</li>
+<li>medianHouseValue：区域房价的中位数</li>
+</ul>
+</li>
+<li>前面8个属性都可能对房价有影响，假设影响是<strong>线性</strong>的，可以得到类似的公式<code>A=bB+cC+...iI</code>，A代表房价，B~I代表属性</li>
+</ol>
+<a id="more"></a>
+
+<h2 id="数据清洗"><a href="#数据清洗" class="headerlink" title="数据清洗"></a>数据清洗</h2><h3 id="创建RDD"><a href="#创建RDD" class="headerlink" title="创建RDD"></a>创建RDD</h3><p>把房屋信息数据和每个属性的定义读入到Spark，并创建两个相应的RDD</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.sql <span class="keyword">import</span> SparkSession</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化SparkSession和SparkContext</span></span><br><span class="line">spark = SparkSession.builder \</span><br><span class="line">    .master(<span class="string">"local"</span>) \</span><br><span class="line">    .appName(<span class="string">"California Housing"</span>) \</span><br><span class="line">    .config(<span class="string">"spark.executor.memory"</span>, <span class="string">"1GB"</span>) \</span><br><span class="line">    .getOrCreate()</span><br><span class="line">sc = spark.sparkContext</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取数据并创建RDD</span></span><br><span class="line">rdd = sc.textFile(<span class="string">'/Users/zhongmingmao/Downloads/CaliforniaHousing/cal_housing.data'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取数据每个属性的定义并创建RDD</span></span><br><span class="line">header = sc.textFile(<span class="string">'/Users/zhongmingmao/Downloads/CaliforniaHousing/cal_housing.domain'</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="collect-take"><a href="#collect-take" class="headerlink" title="collect + take"></a>collect + take</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># collect函数会把所有数据都加载到内存中，常用方法是用take函数去只读取RDD中的某几个元素</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>header.collect()</span><br><span class="line">[<span class="string">u'longitude: continuous.'</span>, <span class="string">u'latitude: continuous.'</span>, <span class="string">u'housingMedianAge: continuous. '</span>, <span class="string">u'totalRooms: continuous. '</span>, <span class="string">u'totalBedrooms: continuous. '</span>, <span class="string">u'population: continuous. '</span>, <span class="string">u'households: continuous. '</span>, <span class="string">u'medianIncome: continuous. '</span>, <span class="string">u'medianHouseValue: continuous. '</span>]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 读取前两个数据</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.take(<span class="number">2</span>)</span><br><span class="line">[<span class="string">u'-122.230000,37.880000,41.000000,880.000000,129.000000,322.000000,126.000000,8.325200,452600.000000'</span></span><br><span class="line">, <span class="string">u'-122.220000,37.860000,21.000000,7099.000000,1106.000000,2401.000000,1138.000000,8.301400,358500.000000'</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="map"><a href="#map" class="headerlink" title="map"></a>map</h3><p>用SparkContext.textFile函数创建的RDD，每个数据都是一个大字符串，各个属性用逗号分隔，用<strong>map</strong>函数把大字符串分隔成数组</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">rdd = rdd.map(<span class="keyword">lambda</span> line: line.split(<span class="string">","</span>))</span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>rdd.take(<span class="number">2</span>)</span><br><span class="line">[[<span class="string">u'-122.230000'</span>, <span class="string">u'37.880000'</span>, <span class="string">u'41.000000'</span>, <span class="string">u'880.000000'</span>, <span class="string">u'129.000000'</span>, <span class="string">u'322.000000'</span>, <span class="string">u'126.000000'</span>, <span class="string">u'8.325200'</span>, <span class="string">u'452600.000000'</span>]</span><br><span class="line">, [<span class="string">u'-122.220000'</span>, <span class="string">u'37.860000'</span>, <span class="string">u'21.000000'</span>, <span class="string">u'7099.000000'</span>, <span class="string">u'1106.000000'</span>, <span class="string">u'2401.000000'</span>, <span class="string">u'1138.000000'</span>, <span class="string">u'8.301400'</span>, <span class="string">u'358500.000000'</span>]]</span><br></pre></td></tr></table></figure>
+
+<h3 id="doDF"><a href="#doDF" class="headerlink" title="doDF"></a>doDF</h3><p>Spark SQL的DataFrame API在查询<strong>结构化数据</strong>时更加方便，且性能更好，先把<strong>RDD转换为DataFrame</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.sql <span class="keyword">import</span> Row</span><br><span class="line"></span><br><span class="line">df = rdd.map(<span class="keyword">lambda</span> line: Row(longitude=line[<span class="number">0</span>],</span><br><span class="line">                              latitude=line[<span class="number">1</span>],</span><br><span class="line">                              housingMedianAge=line[<span class="number">2</span>],</span><br><span class="line">                              totalRooms=line[<span class="number">3</span>],</span><br><span class="line">                              totalBedRooms=line[<span class="number">4</span>],</span><br><span class="line">                              population=line[<span class="number">5</span>],</span><br><span class="line">                              households=line[<span class="number">6</span>],</span><br><span class="line">                              medianIncome=line[<span class="number">7</span>],</span><br><span class="line">                              medianHouseValue=line[<span class="number">8</span>])).toDF()</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.show()</span><br><span class="line">+-----------+----------------+---------+-----------+----------------+------------+-----------+-------------+-----------+</span><br><span class="line">| households|housingMedianAge| latitude|  longitude|medianHouseValue|medianIncome| population|totalBedRooms| totalRooms|</span><br><span class="line">+-----------+----------------+---------+-----------+----------------+------------+-----------+-------------+-----------+</span><br><span class="line">| <span class="number">126.000000</span>|       <span class="number">41.000000</span>|<span class="number">37.880000</span>|<span class="number">-122.230000</span>|   <span class="number">452600.000000</span>|    <span class="number">8.325200</span>| <span class="number">322.000000</span>|   <span class="number">129.000000</span>| <span class="number">880.000000</span>|</span><br><span class="line">|<span class="number">1138.000000</span>|       <span class="number">21.000000</span>|<span class="number">37.860000</span>|<span class="number">-122.220000</span>|   <span class="number">358500.000000</span>|    <span class="number">8.301400</span>|<span class="number">2401.000000</span>|  <span class="number">1106.000000</span>|<span class="number">7099.000000</span>|</span><br><span class="line">| <span class="number">177.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.240000</span>|   <span class="number">352100.000000</span>|    <span class="number">7.257400</span>| <span class="number">496.000000</span>|   <span class="number">190.000000</span>|<span class="number">1467.000000</span>|</span><br><span class="line">| <span class="number">219.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.250000</span>|   <span class="number">341300.000000</span>|    <span class="number">5.643100</span>| <span class="number">558.000000</span>|   <span class="number">235.000000</span>|<span class="number">1274.000000</span>|</span><br><span class="line">| <span class="number">259.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.250000</span>|   <span class="number">342200.000000</span>|    <span class="number">3.846200</span>| <span class="number">565.000000</span>|   <span class="number">280.000000</span>|<span class="number">1627.000000</span>|</span><br><span class="line">| <span class="number">193.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.250000</span>|   <span class="number">269700.000000</span>|    <span class="number">4.036800</span>| <span class="number">413.000000</span>|   <span class="number">213.000000</span>| <span class="number">919.000000</span>|</span><br><span class="line">| <span class="number">514.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.840000</span>|<span class="number">-122.250000</span>|   <span class="number">299200.000000</span>|    <span class="number">3.659100</span>|<span class="number">1094.000000</span>|   <span class="number">489.000000</span>|<span class="number">2535.000000</span>|</span><br><span class="line">| <span class="number">647.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.840000</span>|<span class="number">-122.250000</span>|   <span class="number">241400.000000</span>|    <span class="number">3.120000</span>|<span class="number">1157.000000</span>|   <span class="number">687.000000</span>|<span class="number">3104.000000</span>|</span><br><span class="line">| <span class="number">595.000000</span>|       <span class="number">42.000000</span>|<span class="number">37.840000</span>|<span class="number">-122.260000</span>|   <span class="number">226700.000000</span>|    <span class="number">2.080400</span>|<span class="number">1206.000000</span>|   <span class="number">665.000000</span>|<span class="number">2555.000000</span>|</span><br><span class="line">| <span class="number">714.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.840000</span>|<span class="number">-122.250000</span>|   <span class="number">261100.000000</span>|    <span class="number">3.691200</span>|<span class="number">1551.000000</span>|   <span class="number">707.000000</span>|<span class="number">3549.000000</span>|</span><br><span class="line">| <span class="number">402.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.260000</span>|   <span class="number">281500.000000</span>|    <span class="number">3.203100</span>| <span class="number">910.000000</span>|   <span class="number">434.000000</span>|<span class="number">2202.000000</span>|</span><br><span class="line">| <span class="number">734.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.260000</span>|   <span class="number">241800.000000</span>|    <span class="number">3.270500</span>|<span class="number">1504.000000</span>|   <span class="number">752.000000</span>|<span class="number">3503.000000</span>|</span><br><span class="line">| <span class="number">468.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.260000</span>|   <span class="number">213500.000000</span>|    <span class="number">3.075000</span>|<span class="number">1098.000000</span>|   <span class="number">474.000000</span>|<span class="number">2491.000000</span>|</span><br><span class="line">| <span class="number">174.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.840000</span>|<span class="number">-122.260000</span>|   <span class="number">191300.000000</span>|    <span class="number">2.673600</span>| <span class="number">345.000000</span>|   <span class="number">191.000000</span>| <span class="number">696.000000</span>|</span><br><span class="line">| <span class="number">620.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.260000</span>|   <span class="number">159200.000000</span>|    <span class="number">1.916700</span>|<span class="number">1212.000000</span>|   <span class="number">626.000000</span>|<span class="number">2643.000000</span>|</span><br><span class="line">| <span class="number">264.000000</span>|       <span class="number">50.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.260000</span>|   <span class="number">140000.000000</span>|    <span class="number">2.125000</span>| <span class="number">697.000000</span>|   <span class="number">283.000000</span>|<span class="number">1120.000000</span>|</span><br><span class="line">| <span class="number">331.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.270000</span>|   <span class="number">152500.000000</span>|    <span class="number">2.775000</span>| <span class="number">793.000000</span>|   <span class="number">347.000000</span>|<span class="number">1966.000000</span>|</span><br><span class="line">| <span class="number">303.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.850000</span>|<span class="number">-122.270000</span>|   <span class="number">155500.000000</span>|    <span class="number">2.120200</span>| <span class="number">648.000000</span>|   <span class="number">293.000000</span>|<span class="number">1228.000000</span>|</span><br><span class="line">| <span class="number">419.000000</span>|       <span class="number">50.000000</span>|<span class="number">37.840000</span>|<span class="number">-122.260000</span>|   <span class="number">158700.000000</span>|    <span class="number">1.991100</span>| <span class="number">990.000000</span>|   <span class="number">455.000000</span>|<span class="number">2239.000000</span>|</span><br><span class="line">| <span class="number">275.000000</span>|       <span class="number">52.000000</span>|<span class="number">37.840000</span>|<span class="number">-122.270000</span>|   <span class="number">162900.000000</span>|    <span class="number">2.603300</span>| <span class="number">690.000000</span>|   <span class="number">298.000000</span>|<span class="number">1503.000000</span>|</span><br><span class="line">+-----------+----------------+---------+-----------+----------------+------------+-----------+-------------+-----------+</span><br><span class="line">only showing top <span class="number">20</span> rows</span><br></pre></td></tr></table></figure>
+
+<h3 id="cast"><a href="#cast" class="headerlink" title="cast"></a>cast</h3><p>每一列的数据格式都是string，通过cast()函数把每一列的类型转换成float</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.sql.types <span class="keyword">import</span> FloatType</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">convertColumn</span><span class="params">(df, names, newType)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> name <span class="keyword">in</span> names:</span><br><span class="line">        df = df.withColumn(name, df[name].cast(newType))</span><br><span class="line">    <span class="keyword">return</span> df</span><br><span class="line"></span><br><span class="line">columns = [<span class="string">'households'</span>, <span class="string">'housingMedianAge'</span>, <span class="string">'latitude'</span>, <span class="string">'longitude'</span>, <span class="string">'medianHouseValue'</span>, <span class="string">'medianIncome'</span>, <span class="string">'population'</span>, <span class="string">'totalBedRooms'</span>, <span class="string">'totalRooms'</span>]</span><br><span class="line"></span><br><span class="line">df = convertColumn(df, columns, FloatType())</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 转换成数字有很多优势，例如可以统计出所有建造年限各有多少个房子</span></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>df.groupBy(<span class="string">"housingMedianAge"</span>).count().sort(<span class="string">"housingMedianAge"</span>, ascending=<span class="literal">False</span>).show()</span><br><span class="line">+----------------+-----+</span><br><span class="line">|housingMedianAge|count|</span><br><span class="line">+----------------+-----+</span><br><span class="line">|            <span class="number">52.0</span>| <span class="number">1273</span>|</span><br><span class="line">|            <span class="number">51.0</span>|   <span class="number">48</span>|</span><br><span class="line">|            <span class="number">50.0</span>|  <span class="number">136</span>|</span><br><span class="line">|            <span class="number">49.0</span>|  <span class="number">134</span>|</span><br><span class="line">|            <span class="number">48.0</span>|  <span class="number">177</span>|</span><br><span class="line">|            <span class="number">47.0</span>|  <span class="number">198</span>|</span><br><span class="line">|            <span class="number">46.0</span>|  <span class="number">245</span>|</span><br><span class="line">|            <span class="number">45.0</span>|  <span class="number">294</span>|</span><br><span class="line">|            <span class="number">44.0</span>|  <span class="number">356</span>|</span><br><span class="line">|            <span class="number">43.0</span>|  <span class="number">353</span>|</span><br><span class="line">|            <span class="number">42.0</span>|  <span class="number">368</span>|</span><br><span class="line">|            <span class="number">41.0</span>|  <span class="number">296</span>|</span><br><span class="line">|            <span class="number">40.0</span>|  <span class="number">304</span>|</span><br><span class="line">|            <span class="number">39.0</span>|  <span class="number">369</span>|</span><br><span class="line">|            <span class="number">38.0</span>|  <span class="number">394</span>|</span><br><span class="line">|            <span class="number">37.0</span>|  <span class="number">537</span>|</span><br><span class="line">|            <span class="number">36.0</span>|  <span class="number">862</span>|</span><br><span class="line">|            <span class="number">35.0</span>|  <span class="number">824</span>|</span><br><span class="line">|            <span class="number">34.0</span>|  <span class="number">689</span>|</span><br><span class="line">|            <span class="number">33.0</span>|  <span class="number">615</span>|</span><br><span class="line">+----------------+-----+</span><br><span class="line">only showing top <span class="number">20</span> rows</span><br></pre></td></tr></table></figure>
+
+<h2 id="预处理"><a href="#预处理" class="headerlink" title="预处理"></a>预处理</h2><ol>
+<li>房价的值普遍都很大，需要把它们调整成相对较小的数字</li>
+<li>有的属性没太大意义，例如区域内的总房间数和总卧室数，更应该关心的是平均房间数</li>
+<li>房价是结果，其他属性是输入参数，需要把它们<strong>分离处理</strong></li>
+<li>有的属性最大值和最小值范围很大，需要把它们<strong>标准化处理</strong></li>
+</ol>
+<h3 id="调小房价"><a href="#调小房价" class="headerlink" title="调小房价"></a>调小房价</h3><p>大部分房价都是10万起</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.sql <span class="keyword">import</span> functions</span><br><span class="line"></span><br><span class="line">df = df.withColumn(<span class="string">"medianHouseValue"</span>, functions.col(<span class="string">"medianHouseValue"</span>) / <span class="number">100000</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加新列"><a href="#添加新列" class="headerlink" title="添加新列"></a>添加新列</h3><ol>
+<li>每个家庭的平均房间数：roomsPerHousehold</li>
+<li>每个家庭的平均人数：populationPerHousehold</li>
+<li>卧室在总房间的占比：bedroomsPerRoom</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">df = df.withColumn(<span class="string">"roomsPerHousehold"</span>, functions.col(<span class="string">"totalRooms"</span>) / functions.col(<span class="string">"households"</span>)) \</span><br><span class="line">    .withColumn(<span class="string">"populationPerHousehold"</span>, functions.col(<span class="string">"population"</span>) / functions.col(<span class="string">"households"</span>)) \</span><br><span class="line">    .withColumn(<span class="string">"bedroomsPerRoom"</span>, functions.col(<span class="string">"totalBedRooms"</span>) / functions.col(<span class="string">"totalRooms"</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="筛选列"><a href="#筛选列" class="headerlink" title="筛选列"></a>筛选列</h3><p>去除没有太大价值的列，例如经纬度，保留有价值的列</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">df = df.select(<span class="string">"medianHouseValue"</span>,</span><br><span class="line">               <span class="string">"totalBedRooms"</span>,</span><br><span class="line">               <span class="string">"population"</span>,</span><br><span class="line">               <span class="string">"households"</span>,</span><br><span class="line">               <span class="string">"medianIncome"</span>,</span><br><span class="line">               <span class="string">"roomsPerHousehold"</span>,</span><br><span class="line">               <span class="string">"populationPerHousehold"</span>,</span><br><span class="line">               <span class="string">"bedroomsPerRoom"</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="分离处理"><a href="#分离处理" class="headerlink" title="分离处理"></a>分离处理</h3><p>先把DataFrame转换到RDD，然后用map函数把每个对象分成两部分，最后再转换回DataFrame</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.ml.linalg <span class="keyword">import</span> DenseVector</span><br><span class="line"></span><br><span class="line">input_data = df.rdd.map(<span class="keyword">lambda</span> x: (x[<span class="number">0</span>], DenseVector(x[<span class="number">1</span>:])))</span><br><span class="line"><span class="comment"># label代表房价，features代表其余参数的列表</span></span><br><span class="line">df = spark.createDataFrame(input_data, [<span class="string">"label"</span>, <span class="string">"features"</span>])</span><br></pre></td></tr></table></figure>
+
+<h3 id="标准化"><a href="#标准化" class="headerlink" title="标准化"></a>标准化</h3><p>数据的标准化，可以借助Spark ML来完成，增加了features_scaled列，里面每个数据都是标准化过的，用于训练模型</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.ml.feature <span class="keyword">import</span> StandardScaler</span><br><span class="line"></span><br><span class="line">standardScaler = StandardScaler(inputCol=<span class="string">"features"</span>, outputCol=<span class="string">"features_scaled"</span>)</span><br><span class="line">scaler = standardScaler.fit(df)</span><br><span class="line">scaled_df = scaler.transform(df)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[Row(label=<span class="number">4.526</span>, features=DenseVector([<span class="number">129.0</span>, <span class="number">322.0</span>, <span class="number">126.0</span>, <span class="number">8.3252</span>, <span class="number">6.9841</span>, <span class="number">2.5556</span>, <span class="number">0.1466</span>]), features_scaled=DenseVector([<span class="number">0.3062</span>, <span class="number">0.2843</span>, <span class="number">0.3296</span>, <span class="number">4.3821</span>, <span class="number">2.8228</span>, <span class="number">0.2461</span>, <span class="number">2.5264</span>]))]</span><br></pre></td></tr></table></figure>
+
+<h2 id="创建模型"><a href="#创建模型" class="headerlink" title="创建模型"></a>创建模型</h2><ol>
+<li>把数据集分成<strong>训练集</strong>和<strong>测试集</strong>，训练集用来训练模型，测试集用来评估模型的正确性</li>
+<li>DataFrame的randomSplit函数很容易将数据随机分割，将80%的数据用于训练，20%的数据用于测试</li>
+<li>Spark ML提供的LinearRegression功能，很容易构建一个线性回归模型</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pyspark.ml.regression <span class="keyword">import</span> LinearRegression</span><br><span class="line"></span><br><span class="line">train_data, test_data = scaled_df.randomSplit([<span class="number">.8</span>, <span class="number">.2</span>], seed=<span class="number">123</span>)</span><br><span class="line">lr = LinearRegression(featuresCol=<span class="string">'features_scaled'</span>, labelCol=<span class="string">"label"</span>, maxIter=<span class="number">10</span>, regParam=<span class="number">0.3</span>, elasticNetParam=<span class="number">0.8</span>)</span><br><span class="line">linearModel = lr.fit(train_data)</span><br></pre></td></tr></table></figure>
+
+<h2 id="模型评估"><a href="#模型评估" class="headerlink" title="模型评估"></a>模型评估</h2><p>可以用linearModel的transform函数来预测测试集中的房价，与真实情况进行对比</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">predicted = linearModel.transform(test_data)</span><br><span class="line">predictions = predicted.select(<span class="string">"prediction"</span>).rdd.map(<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line">labels = predicted.select(<span class="string">"label"</span>).rdd.map(<span class="keyword">lambda</span> x: x[<span class="number">0</span>])</span><br><span class="line">predictionAndLabel = predictions.zip(labels)</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+      
+
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/12/big-data-spark-flink/" rel="bookmark">大数据 -- Spark + Flink</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/05/big-data-spark-overview/" rel="bookmark">大数据 -- Spark概述</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/06/big-data-spark-rdd/" rel="bookmark">大数据 -- Spark RDD</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/07/big-data-spark-sql/" rel="bookmark">大数据 -- Spark SQL</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/08/big-data-spark-streaming/" rel="bookmark">大数据 -- Spark Streaming</a></div>
+      
+    </li>
+  
+  </ul>
+
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhongmingmao</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://zhongmingmao.me/2019/07/11/big-data-linear-regression/" title="大数据 -- 线性回归">http://zhongmingmao.me/2019/07/11/big-data-linear-regression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/big-data/" rel="tag"><i class="fa fa-tag"></i> Big Data</a>
+          
+            <a href="/tags/spark/" rel="tag"><i class="fa fa-tag"></i> Spark</a>
+          
+            <a href="/tags/linear-regression/" rel="tag"><i class="fa fa-tag"></i> Linear Regression</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/10/big-data-spark-word-wount/" rel="next" title="大数据 -- Word Count">
+                <i class="fa fa-chevron-left"></i> 大数据 -- Word Count
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/12/big-data-spark-flink/" rel="prev" title="大数据 -- Spark + Flink">
+                大数据 -- Spark + Flink <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg" alt="zhongmingmao">
+            
+              <p class="site-author-name" itemprop="name">zhongmingmao</p>
+              <div class="site-description motion-element" itemprop="description">懦夫从不启程</div>
+          </div>
+
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhongmingmao0625@gmail.com" title="E-Mail &rarr; mailto:zhongmingmao0625@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+             <div class="cc-license motion-element" itemprop="license">
+              
+              
+                
+              
+              
+              
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+             </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#数据集"><span class="nav-number">1.</span> <span class="nav-text">数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据清洗"><span class="nav-number">2.</span> <span class="nav-text">数据清洗</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建RDD"><span class="nav-number">2.1.</span> <span class="nav-text">创建RDD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#collect-take"><span class="nav-number">2.2.</span> <span class="nav-text">collect + take</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#map"><span class="nav-number">2.3.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#doDF"><span class="nav-number">2.4.</span> <span class="nav-text">doDF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cast"><span class="nav-number">2.5.</span> <span class="nav-text">cast</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#预处理"><span class="nav-number">3.</span> <span class="nav-text">预处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#调小房价"><span class="nav-number">3.1.</span> <span class="nav-text">调小房价</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#添加新列"><span class="nav-number">3.2.</span> <span class="nav-text">添加新列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#筛选列"><span class="nav-number">3.3.</span> <span class="nav-text">筛选列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分离处理"><span class="nav-number">3.4.</span> <span class="nav-text">分离处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标准化"><span class="nav-number">3.5.</span> <span class="nav-text">标准化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建模型"><span class="nav-number">4.</span> <span class="nav-text">创建模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#模型评估"><span class="nav-number">5.</span> <span class="nav-text">模型评估</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhongmingmao</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">1.9m</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">58:48</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.2</div>
+
+
+
+
+        
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=61684383";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fastclick@1/lib/fastclick.min.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery_lazyload@1/jquery.lazyload.min.js"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.pack.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1.1/reading_progress.min.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.2"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  
+  
+
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.json";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz',
+                'X-LC-Key': 'Vfku3wPjnVYyHe33mjB6bJXY',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+    
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-bookmark@1/bookmark.min.js"></script>
+  <script>
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+<script>
+  $('.highlight').not('.gist .highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      const selection = document.getSelection();
+      const selected = selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+        if (result) $(this).text('复制成功');
+        else $(this).text('复制失败');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+      if (selected) {
+        selection.removeAllRanges();
+        selection.addRange(selected);
+      }
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

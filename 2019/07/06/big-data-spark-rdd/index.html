@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+      
+    
+    
+      
+    
+  <script src="//cdn.jsdelivr.net/npm/pace-js@1/pace.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/pace-js@1/themes/blue/pace-theme-minimal.css">
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+  <meta name="msvalidate.01" content="1699A46CB5242072D8403C073F576423">
+
+
+
+
+
+
+
+  
+  
+    
+  
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/fancybox@3/dist/css/jquery.fancybox.min.css">
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/dragon/dragon-apple-touch-icon.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/dragon/dragon-favicon-32x32.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/dragon/dragon-favicon-16x16.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/dragon/dragon-logo.svg?v=7.1.2" color="#222">
+
+
+
+  <meta name="msapplication-config" content="/images/dragon/dragon-browserconfig.xml">
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.1.2',
+    sidebar: {"position":"right","width":180,"display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: true,
+    fastclick: true,
+    lazyload: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="新的数据抽象模型 传统的MapReduce框架运行缓慢 有向无环图的中间计算结果需要写入硬盘来防止运行结果丢失 每次调用中间计算结果都需要重新进行一次硬盘的读取 反复对硬盘进行读写操作以及潜在的数据复制和序列化操作大大地提高了计算的延迟     RDD是一个基于分布式内存的数据抽象，不仅支持基于工作集的应用，同时具有数据流模型的特点">
+<meta name="keywords" content="Big Data,Spark,RDD">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大数据 -- Spark RDD">
+<meta property="og:url" content="http://zhongmingmao.me/2019/07/06/big-data-spark-rdd/index.html">
+<meta property="og:site_name" content="点滴积累">
+<meta property="og:description" content="新的数据抽象模型 传统的MapReduce框架运行缓慢 有向无环图的中间计算结果需要写入硬盘来防止运行结果丢失 每次调用中间计算结果都需要重新进行一次硬盘的读取 反复对硬盘进行读写操作以及潜在的数据复制和序列化操作大大地提高了计算的延迟     RDD是一个基于分布式内存的数据抽象，不仅支持基于工作集的应用，同时具有数据流模型的特点">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-partition.jpg">
+<meta property="og:image" content="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-structure.png">
+<meta property="og:image" content="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-narrow-dependency.jpg">
+<meta property="og:image" content="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-wide-dependency.jpg">
+<meta property="og:updated_time" content="2020-04-30T05:35:06.458Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="大数据 -- Spark RDD">
+<meta name="twitter:description" content="新的数据抽象模型 传统的MapReduce框架运行缓慢 有向无环图的中间计算结果需要写入硬盘来防止运行结果丢失 每次调用中间计算结果都需要重新进行一次硬盘的读取 反复对硬盘进行读写操作以及潜在的数据复制和序列化操作大大地提高了计算的延迟     RDD是一个基于分布式内存的数据抽象，不仅支持基于工作集的应用，同时具有数据流模型的特点">
+<meta name="twitter:image" content="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-partition.jpg">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="点滴积累" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="http://zhongmingmao.me/2019/07/06/big-data-spark-rdd/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>大数据 -- Spark RDD | 点滴积累</title>
+  
+
+
+
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-97268729-1"></script>
+  <script>
+    var host = window.location.hostname;
+    if (host !== "localhost" || !true) {
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-97268729-1');
+    }
+  </script>
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?fad94c1137504ba7685443e9d1f2abe9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-right page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">点滴积累</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签<span class="badge">127</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类<span class="badge">38</span></a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+      
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档<span class="badge">352</span></a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+    <div class="reading-progress-bar"></div>
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://zhongmingmao.me/2019/07/06/big-data-spark-rdd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="zhongmingmao">
+      <meta itemprop="description" content="懦夫从不启程">
+      <meta itemprop="image" content="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="点滴积累">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">大数据 -- Spark RDD
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-06 23:31:07" itemprop="dateCreated datePublished" datetime="2019-07-06T23:31:07+08:00">2019-07-06</time>
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/big-data/" itemprop="url" rel="index"><span itemprop="name">Big Data</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/big-data/spark/" itemprop="url" rel="index"><span itemprop="name">Spark</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/2019/07/06/big-data-spark-rdd/" class="leancloud_visitors" data-flag-title="大数据 -- Spark RDD">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+            <div class="post-symbolscount">
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">4.6k</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">8 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="新的数据抽象模型"><a href="#新的数据抽象模型" class="headerlink" title="新的数据抽象模型"></a>新的数据抽象模型</h2><ol>
+<li>传统的MapReduce框架运行缓慢<ul>
+<li>有向无环图的<strong>中间计算结果</strong>需要写入<strong>硬盘</strong>来防止运行结果丢失</li>
+<li>每次调用中间计算结果都需要重新进行一次硬盘的读取<ul>
+<li>反复对硬盘进行<strong>读写</strong>操作以及潜在的<strong>数据复制</strong>和<strong>序列化</strong>操作大大地提高了计算的延迟</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>RDD是一个基于<strong>分布式内存</strong>的数据抽象，不仅支持基于<strong>工作集</strong>的应用，同时具有<strong>数据流</strong>模型的特点</li>
+</ol>
+<a id="more"></a>
+
+<h2 id="RDD的定义"><a href="#RDD的定义" class="headerlink" title="RDD的定义"></a>RDD的定义</h2><p>RDD表示<strong>已被分区</strong>、<strong>不可变的</strong>、并能够被<strong>并行操作</strong>的数据集合</p>
+<h3 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h3><ol>
+<li>分区代表<strong>同一个RDD包含的数据被存储在系统的不同节点中</strong>，这是RDD可以<strong>被并行处理的前提</strong></li>
+<li>逻辑上，可以认为RDD是一个大数组，数组中的每个元素代表一个分区</li>
+<li>在物理存储中，每个分区指向一个存放在内存或硬盘中的<strong>数据块</strong>，数据块是独立的，可以被存放在系统的不同节点</li>
+<li><em><strong>RDD只是抽象意义的数据集合，分区内部并不会存储具体的数据</strong></em></li>
+<li>RDD中的每个分区都存有它在该RDD中的index，通过<strong>RDD的ID</strong>和<strong>分区的index</strong>可以唯一确定对应的<strong>数据块编号</strong><ul>
+<li>从而通过<strong>底层存储层的接口</strong>提取到数据进行处理</li>
+</ul>
+</li>
+<li>在集群中，各个节点上的数据会<strong>尽可能地放在内存</strong>中，只有当内存没有空间时才会存入硬盘，<strong>最大化地减少硬盘读写的开销</strong></li>
+<li><strong>RDD内部存储的数据是只读的</strong>，但可以修改并行计算单元的划分结构，即<strong>可以修改分区的数量</strong></li>
+</ol>
+<img src="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-partition.jpg" width="1000/">
+
+<h3 id="不可变性"><a href="#不可变性" class="headerlink" title="不可变性"></a>不可变性</h3><ol>
+<li>不可变性代表<strong>每个RDD都是只读的</strong>，它<strong>所包含的分区信息不可以被改变</strong></li>
+<li>已有的RDD不可以被改变，只能对现有的RDD进行<strong>转换</strong>操作，得到<strong>新的RDD</strong>作为<strong>中间计算结果</strong></li>
+<li>对于中间结果的RDD，只需记录该RDD是通过哪个RDD进行转换操作得来的，即<strong>依赖关系</strong>，而<strong>不必立刻去具体存储进行计算</strong><ul>
+<li>有助于<strong>提升Spark的计算效率</strong>，并且<strong>使错误恢复更加容易</strong></li>
+</ul>
+</li>
+<li><strong>容错特性</strong><ul>
+<li>对于有N步的计算模型，如果记载第N步输出RDD的节点发生故障，数据丢失</li>
+<li>可以从第N-1步的RDD出发，再次计算，<strong>无需重复整个N步计算过程</strong></li>
+<li>这种容错特性也是RDD为什么是一个<strong>弹性</strong>的数据集的原因</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 读入文本文件data.txt，创建第一个RDD lines，每个元素是一行文本</span></span><br><span class="line">lines = sc.textFile(<span class="string">"data.txt"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用map函数去映射产生第二个RDD lineLengths，每个元素代表每一行简单文本的字数</span></span><br><span class="line">lineLengths = lines.map(lambda s: len(s))</span><br><span class="line"></span><br><span class="line"><span class="comment">// 调用reduce函数去得到第三个RDD totalLength，只有一个元素，代表整个文本的总字数</span></span><br><span class="line">totalLength = lineLengths.reduce(lambda a, b: a + b)</span><br></pre></td></tr></table></figure>
+
+<h3 id="并行操作"><a href="#并行操作" class="headerlink" title="并行操作"></a>并行操作</h3><p>由于单个RDD的<strong>分区</strong>特性，使得RDD<strong>天然支持并行操作</strong>，即不同节点上的数据可以被分别处理，然后产生一个新的RDD</p>
+<h2 id="RDD的结构"><a href="#RDD的结构" class="headerlink" title="RDD的结构"></a>RDD的结构</h2><img src="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-structure.png" width="800/">
+
+<ol>
+<li>SparkContext是<strong>所有Spark功能的入口</strong>，它代表了与Spark节点的连接，用来创建RDD对象以及在节点中的广播变量<ul>
+<li>一个线程只有一个SparkContext</li>
+</ul>
+</li>
+<li>Partitions代表RDD中<strong>数据的逻辑结构</strong>，每个Partition都会映射到某个节点内存或硬盘的一个<strong>数据块</strong></li>
+<li>Partitioner决定了RDD的<strong>分区方式</strong>，目前有两种主流的分区方式：<strong>Hash</strong> partitioner、<strong>Range</strong> partitioner</li>
+</ol>
+<h3 id="依赖关系"><a href="#依赖关系" class="headerlink" title="依赖关系"></a>依赖关系</h3><ol>
+<li>Dependencies是RDD中最重要的组件之一</li>
+<li>Spark不需要将每个中间计算结果进行数据复制以防止数据丢失，因为每一步产生的RDD里面都会存储它的依赖关系</li>
+<li>Spark支持两种依赖关系：<strong>窄依赖</strong>（Narrow Dependency）、<strong>宽依赖</strong>（Wide Dependency）<ul>
+<li>窄依赖：父RDD的分区可以<strong>一一对应</strong>到子RDD的分区<ul>
+<li>窄依赖允许子RDD的每个分区可以被<strong>并行处理</strong>产生</li>
+</ul>
+</li>
+<li>宽依赖：<strong>父RDD的分区可以被多个子RDD的分区使用</strong><ul>
+<li>宽依赖<em><strong>必须等父RDD的所有分区都被计算好之后才能开始处理</strong></em></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>区分窄依赖和宽依赖的原因<ul>
+<li>窄依赖可以支持在<strong>同一个节点</strong>上<strong>链式</strong>执行多条命令，而宽依赖需要<strong>所有的父分区</strong>都是<strong>可用</strong>的</li>
+<li><strong>窄依赖的失效恢复更有效</strong>，因为只需要重新计算丢失的父分区即可，而宽依赖涉及到RDD各级的父分区</li>
+</ul>
+</li>
+</ol>
+<h4 id="窄依赖"><a href="#窄依赖" class="headerlink" title="窄依赖"></a>窄依赖</h4><img src="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-narrow-dependency.jpg" width="800/">
+
+<h4 id="宽依赖"><a href="#宽依赖" class="headerlink" title="宽依赖"></a>宽依赖</h4><img src="https://big-data-1253868755.cos.ap-guangzhou.myqcloud.com/big-data-spark-rdd-wide-dependency.jpg" width="800/">
+
+<h3 id="检查点"><a href="#检查点" class="headerlink" title="检查点"></a>检查点</h3><ol>
+<li>基于RDD的依赖关系，如果任意一个RDD在相应的节点丢失，只需要从上一步的RDD出发再次计算，就能恢复该RDD<ul>
+<li>如果一个RDD的<strong>依赖链比较长</strong>，而且<strong>中间又有多个RDD出现故障</strong>的话，进行恢复可能会非常耗费<strong>时间</strong>和<strong>计算资源</strong></li>
+<li>检查点的引入，就是为了优化这些情况下的数据恢复</li>
+</ul>
+</li>
+<li>在计算过程中，对于一些计算过程<strong>比较耗时</strong>的RDD<ul>
+<li>可以将它<strong>缓存至硬盘或HDFS</strong>中</li>
+<li>标记这个RDD被检查点处理过，并<strong>清空</strong>它的<strong>所有依赖关系</strong>，同时给它新建一个依赖于<strong>CheckpointRDD</strong>的依赖关系</li>
+<li><strong>CheckpointRDD可以用来从硬盘中读取RDD并生成新的分区信息</strong></li>
+</ul>
+</li>
+<li>当某个子RDD需要错误恢复时，回溯至该RDD，发现它被检查点记录过<ul>
+<li>就可以<strong>直接去硬盘中读取该RDD</strong>，而无需再往前回溯计算</li>
+</ul>
+</li>
+</ol>
+<h3 id="存储级别"><a href="#存储级别" class="headerlink" title="存储级别"></a>存储级别</h3><ol>
+<li>存储级别是一个枚举类型，用来记录<strong>RDD持久化</strong>时的存储级别<ul>
+<li>MEMORY_ONLY：只缓存在内存中，如果内存空间不够则不缓存多出来的部分，<strong>默认值</strong></li>
+<li>MEMORY_AND_DISK：缓存在内存中，如果空间不够则缓存在硬盘中</li>
+<li>DISK_ONLY：只缓存在硬盘中</li>
+<li>MEMORY_ONLY_2、MEMORY_AND_DISK_2：与上面功能相同，只不过每个分区在集群的两个节点上建立副本</li>
+</ul>
+</li>
+<li>Spark相比于Hadoop在性能上的提升，可以随时把计算好的RDD缓存在内存中，大幅减少磁盘读写的开销</li>
+</ol>
+<h3 id="迭代函数"><a href="#迭代函数" class="headerlink" title="迭代函数"></a>迭代函数</h3><ol>
+<li>迭代函数（Iterator）和计算函数（Compute）用来表示<strong>RDD怎样通过父RDD计算得到的</strong></li>
+<li>迭代函数首先会判断<strong>缓存</strong>中是否有想要计算的RDD<ul>
+<li>如果有就直接读取，如果没有就查找想要计算的RDD是否被<strong>检查点</strong>处理过，如果有，就直接读取</li>
+<li>如果没有就调用<strong>计算函数</strong>向上<strong>递归</strong>，查找<strong>父RDD</strong>进行计算</li>
+</ul>
+</li>
+</ol>
+<h2 id="RDD的数据操作"><a href="#RDD的数据操作" class="headerlink" title="RDD的数据操作"></a>RDD的数据操作</h2><ol>
+<li>RDD的数据操作分为两种：<strong>转换</strong>（Transformation）和<strong>动作</strong>（Action）</li>
+<li>转换：把一个RDD转换为另一个RDD</li>
+<li>动作：通过计算返回一个结果</li>
+</ol>
+<h3 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h3><h4 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h4><p>把一个RDD中的所有数据通过一个函数，映射成一个新的RDD，任何原RDD中的元素在新RDD中都<strong>有且只有一个</strong>元素与之对应</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdd = sc.parallelize([<span class="string">"b"</span>, <span class="string">"a"</span>, <span class="string">"c"</span>])</span><br><span class="line">rdd2 = rdd.map(lambda x: (x, <span class="number">1</span>)) <span class="comment">// [('b', 1), ('a', 1), ('c', 1)]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h4><p>选择原RDD里所有数据中满足特定条件的数据，去返回一个新的RDD</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdd = sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line">rdd2 = rdd.filter(lambda x: x % <span class="number">2</span> == <span class="number">0</span>) <span class="comment">// [2, 4]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="mapPartitions"><a href="#mapPartitions" class="headerlink" title="mapPartitions"></a>mapPartitions</h4><ol>
+<li>mapPartitions是map的变种，<ul>
+<li>map的输入函数是应用于RDD中每个<strong>元素</strong></li>
+<li>mapPartitions的输入函数式应用于RDD的每个<strong>分区</strong>，将每个分区中的内容作为整体来处理</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建了两个分区的RDD，mapPartitions的输入函数是对每个分区内的元素求和，1+2=3，3+4=7</span></span><br><span class="line">rdd = sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>], <span class="number">2</span>)</span><br><span class="line"><span class="function">def <span class="title">f</span><span class="params">(iterator)</span>: yield <span class="title">sum</span><span class="params">(iterator)</span></span></span><br><span class="line"><span class="function">rdd2 </span>= rdd.mapPartitions(f) <span class="comment">// [3, 7]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="groupByKey"><a href="#groupByKey" class="headerlink" title="groupByKey"></a>groupByKey</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">rdd = sc.parallelize([(<span class="string">"a"</span>, <span class="number">1</span>), (<span class="string">"b"</span>, <span class="number">1</span>), (<span class="string">"a"</span>, <span class="number">2</span>)])</span><br><span class="line">rdd.groupByKey().collect()</span><br><span class="line"><span class="comment">//"a" [1, 2]</span></span><br><span class="line"><span class="comment">//"b" [1]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="动作"><a href="#动作" class="headerlink" title="动作"></a>动作</h3><h4 id="collect"><a href="#collect" class="headerlink" title="collect"></a>collect</h4><ol>
+<li>RDD中的collect操作与函数式编程中的collect类似，会以<strong>数组</strong>的形式，返回RDD的<strong>所有元素</strong></li>
+<li>collect操作只有在数组所含的数据量较小的时候使用，如果数据量较大，会占用JVM内存，导致<strong>内存溢出</strong></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdd = sc.parallelize([<span class="string">"b"</span>, <span class="string">"a"</span>, <span class="string">"c"</span>])</span><br><span class="line">rdd.map(lambda x: (x, <span class="number">1</span>)).collect() <span class="comment">// [('b', 1), ('a', 1), ('c', 1)]</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="reduce"><a href="#reduce" class="headerlink" title="reduce"></a>reduce</h4><p>reduce操作与MapReduce中的reduce类似，会把RDD中的元素根据一个输入函数聚合起来</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> operator <span class="keyword">import</span> add</span><br><span class="line">sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]).reduce(add)  // <span class="number">15</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="count"><a href="#count" class="headerlink" title="count"></a>count</h4><p>count操作会返回RDD中元素的个数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sc.parallelize([<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>]).count() <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="countByKey"><a href="#countByKey" class="headerlink" title="countByKey"></a>countByKey</h4><p>countByKey操作仅适用于<strong>键值对</strong>类型的RDD，返回具有每个Key计数的&lt;Key,Count&gt;的map</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">rdd = sc.parallelize([(<span class="string">"a"</span>, <span class="number">1</span>), (<span class="string">"b"</span>, <span class="number">1</span>), (<span class="string">"a"</span>, <span class="number">1</span>)])</span><br><span class="line">sorted(rdd.countByKey().items()) <span class="comment">// [('a', 2), ('b', 1)]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h3><ol>
+<li>所有<strong>转换操作</strong>都很懒，只是<strong>生成新的RDD</strong>，并且<strong>记录依赖关系</strong>，但Spark<strong>不会立刻计算</strong>出新RDD中各个分区的数值</li>
+<li>直到遇到一个<strong>动作</strong>时，<strong>数据才会被计算，并且输出结果给Driver</strong></li>
+<li>这种<strong>惰性求值</strong>的方式可以让Spark的运算更加<strong>高效</strong>和<strong>快速</strong></li>
+</ol>
+<h3 id="操作流程"><a href="#操作流程" class="headerlink" title="操作流程"></a>操作流程</h3><ol>
+<li>Spark在每次<strong>转换</strong>操作时，使用新产生的RDD来<strong>记录计算逻辑</strong>，这样把作用在RDD上的所有计算逻辑串连起来形成一个<strong>链条</strong></li>
+<li>当对RDD执行<strong>动作</strong>时，Spark会从计算链的<strong>最后一个RDD开始</strong>，依次从上一个RDD获取数据并执行计算逻辑，最后输出结果</li>
+</ol>
+<h2 id="RDD的持久化（缓存）"><a href="#RDD的持久化（缓存）" class="headerlink" title="RDD的持久化（缓存）"></a>RDD的持久化（缓存）</h2><ol>
+<li>每当对一个RDD调用新的<strong>动作</strong>操作时，整个RDD都会<strong>从头开始</strong>运算</li>
+<li>如果某个RDD会被反复重用的话，每次都从头计算是非常低效的，应该对<strong>多次使用的RDD</strong>进行一个<strong>持久化</strong>操作</li>
+<li>Spark的<strong>persist</strong>和<strong>cache</strong>（默认：<strong>MEMORY_ONLY</strong>）方法支持将RDD的数据缓存至<strong>内存</strong>或<strong>硬盘</strong>中<ul>
+<li>当下次对<strong>同一个RDD</strong>进行<strong>动作</strong>操作时，可以<strong>直接读取</strong>RDD的结果，大幅提高Spark的计算效率</li>
+</ul>
+</li>
+<li>在缓存RDD时，它<strong>所有的依赖关系</strong>也会被一并存下来，所以<strong>持久化RDD</strong>有<em><strong>自动的容错机制</strong></em><ul>
+<li>如果RDD的任一分区丢失了，通过使用<strong>原先创建它的转换操作</strong>，它将被<strong>自动重算</strong></li>
+</ul>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rdd = sc.parallelize([<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>])</span><br><span class="line">rdd1 = rdd.map(lambda x: x+<span class="number">5</span>)</span><br><span class="line">rdd2 = rdd1.filter(lambda x: x % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"><span class="comment">// 后续对rdd2进行了多个不同的动作操作，先执行persist操作</span></span><br><span class="line">rdd2.persist()</span><br><span class="line"><span class="comment">// 无论是count还是first，Spark都不需要从头开始计算</span></span><br><span class="line">count = rdd2.count() <span class="comment">// 3</span></span><br><span class="line">first = rdd2.first() <span class="comment">// 6</span></span><br><span class="line">rdd2.unpersist()</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+      
+
+  <div class="popular-posts-header">相关文章</div>
+  <ul class="popular-posts">
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/11/big-data-linear-regression/" rel="bookmark">大数据 -- 线性回归</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/12/big-data-spark-flink/" rel="bookmark">大数据 -- Spark + Flink</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/05/big-data-spark-overview/" rel="bookmark">大数据 -- Spark概述</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/07/big-data-spark-sql/" rel="bookmark">大数据 -- Spark SQL</a></div>
+      
+    </li>
+  
+    <li class="popular-posts-item">
+      
+      
+      <div class="popular-posts-title"><a href="/2019/07/08/big-data-spark-streaming/" rel="bookmark">大数据 -- Spark Streaming</a></div>
+      
+    </li>
+  
+  </ul>
+
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+      <div>
+        
+
+
+
+
+  
+
+
+
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>zhongmingmao</li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    
+    <a href="http://zhongmingmao.me/2019/07/06/big-data-spark-rdd/" title="大数据 -- Spark RDD">http://zhongmingmao.me/2019/07/06/big-data-spark-rdd/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！</li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/big-data/" rel="tag"><i class="fa fa-tag"></i> Big Data</a>
+          
+            <a href="/tags/spark/" rel="tag"><i class="fa fa-tag"></i> Spark</a>
+          
+            <a href="/tags/rdd/" rel="tag"><i class="fa fa-tag"></i> RDD</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/05/big-data-spark-overview/" rel="next" title="大数据 -- Spark概述">
+                <i class="fa fa-chevron-left"></i> 大数据 -- Spark概述
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/07/07/big-data-spark-sql/" rel="prev" title="大数据 -- Spark SQL">
+                大数据 -- Spark SQL <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="https://zhongmingmao-1253868755.cos.ap-guangzhou.myqcloud.com/dog.jpg" alt="zhongmingmao">
+            
+              <p class="site-author-name" itemprop="name">zhongmingmao</p>
+              <div class="site-description motion-element" itemprop="description">懦夫从不启程</div>
+          </div>
+
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:zhongmingmao0625@gmail.com" title="E-Mail &rarr; mailto:zhongmingmao0625@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            </div>
+          
+
+          
+             <div class="cc-license motion-element" itemprop="license">
+              
+              
+                
+              
+              
+              
+              <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+             </div>
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#新的数据抽象模型"><span class="nav-number">1.</span> <span class="nav-text">新的数据抽象模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDD的定义"><span class="nav-number">2.</span> <span class="nav-text">RDD的定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#分区"><span class="nav-number">2.1.</span> <span class="nav-text">分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#不可变性"><span class="nav-number">2.2.</span> <span class="nav-text">不可变性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并行操作"><span class="nav-number">2.3.</span> <span class="nav-text">并行操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDD的结构"><span class="nav-number">3.</span> <span class="nav-text">RDD的结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#依赖关系"><span class="nav-number">3.1.</span> <span class="nav-text">依赖关系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#窄依赖"><span class="nav-number">3.1.1.</span> <span class="nav-text">窄依赖</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#宽依赖"><span class="nav-number">3.1.2.</span> <span class="nav-text">宽依赖</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检查点"><span class="nav-number">3.2.</span> <span class="nav-text">检查点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储级别"><span class="nav-number">3.3.</span> <span class="nav-text">存储级别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#迭代函数"><span class="nav-number">3.4.</span> <span class="nav-text">迭代函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDD的数据操作"><span class="nav-number">4.</span> <span class="nav-text">RDD的数据操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#转换"><span class="nav-number">4.1.</span> <span class="nav-text">转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Map"><span class="nav-number">4.1.1.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Filter"><span class="nav-number">4.1.2.</span> <span class="nav-text">Filter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mapPartitions"><span class="nav-number">4.1.3.</span> <span class="nav-text">mapPartitions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#groupByKey"><span class="nav-number">4.1.4.</span> <span class="nav-text">groupByKey</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#动作"><span class="nav-number">4.2.</span> <span class="nav-text">动作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#collect"><span class="nav-number">4.2.1.</span> <span class="nav-text">collect</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce"><span class="nav-number">4.2.2.</span> <span class="nav-text">reduce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#count"><span class="nav-number">4.2.3.</span> <span class="nav-text">count</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#countByKey"><span class="nav-number">4.2.4.</span> <span class="nav-text">countByKey</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#区别"><span class="nav-number">4.3.</span> <span class="nav-text">区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作流程"><span class="nav-number">4.4.</span> <span class="nav-text">操作流程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RDD的持久化（缓存）"><span class="nav-number">5.</span> <span class="nav-text">RDD的持久化（缓存）</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2015 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhongmingmao</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点总字数：</span>
+    
+    <span title="站点总字数">1.9m</span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    
+    <span title="站点阅读时长">58:48</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.1.2</div>
+
+
+
+
+        
+
+
+
+
+  <script>
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//tajs.qq.com/stats?sId=61684383";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fastclick@1/lib/fastclick.min.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/jquery_lazyload@1/jquery.lazyload.min.js"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/fancybox@3/dist/js/jquery.fancybox.pack.js"></script>
+
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-reading-progress@1.1/reading_progress.min.js"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.2"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+  
+  
+    
+  
+
+  
+
+  
+  
+  
+
+
+  
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.json";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'e2IMURVDnzc37o6emkTS4i6R-gzGzoHsz',
+                'X-LC-Key': 'Vfku3wPjnVYyHe33mjB6bJXY',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+  
+
+  
+  
+
+  
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+  
+    
+  
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-bookmark@1/bookmark.min.js"></script>
+  <script>
+  
+    bookmark.scrollToMark('auto', "#更多");
+  
+  </script>
+
+
+  
+<script>
+  $('.highlight').not('.gist .highlight').each(function(i, e) {
+    var $wrap = $('<div>').addClass('highlight-wrap');
+    $(e).after($wrap);
+    $wrap.append($('<button>').addClass('copy-btn').append('复制').on('click', function(e) {
+      var code = $(this).parent().find('.code').find('.line').map(function(i, e) {
+        return $(e).text();
+      }).toArray().join('\n');
+      var ta = document.createElement('textarea');
+      var yPosition = window.pageYOffset || document.documentElement.scrollTop;
+      ta.style.top = yPosition + 'px'; // Prevent page scroll
+      ta.style.position = 'absolute';
+      ta.style.opacity = '0';
+      ta.readOnly = true;
+      ta.value = code;
+      document.body.appendChild(ta);
+      const selection = document.getSelection();
+      const selected = selection.rangeCount > 0 ? selection.getRangeAt(0) : false;
+      ta.select();
+      ta.setSelectionRange(0, code.length);
+      ta.readOnly = false;
+      var result = document.execCommand('copy');
+      
+        if (result) $(this).text('复制成功');
+        else $(this).text('复制失败');
+      
+      ta.blur(); // For iOS
+      $(this).blur();
+      if (selected) {
+        selection.removeAllRanges();
+        selection.addRange(selected);
+      }
+    })).on('mouseleave', function(e) {
+      var $b = $(this).find('.copy-btn');
+      setTimeout(function() {
+        $b.text('复制');
+      }, 300);
+    }).append(e);
+  })
+</script>
+
+
+  
+
+  
+
+</body>
+</html>

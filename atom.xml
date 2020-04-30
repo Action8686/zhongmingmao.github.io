@@ -1,0 +1,751 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>点滴积累</title>
+  
+  
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://zhongmingmao.me/"/>
+  <updated>2020-04-30T05:35:06.458Z</updated>
+  <id>http://zhongmingmao.me/</id>
+  
+  <author>
+    <name>zhongmingmao</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>计算机组成 -- 异常</title>
+    <link href="http://zhongmingmao.me/2020/01/20/computer-organization-exception/"/>
+    <id>http://zhongmingmao.me/2020/01/20/computer-organization-exception/</id>
+    <published>2020-01-20T18:11:19.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;异常&quot;&gt;&lt;a href=&quot;#异常&quot; class=&quot;headerlink&quot; title=&quot;异常&quot;&gt;&lt;/a&gt;异常&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;异常是一个&lt;strong&gt;硬件和软件组合在一起的处理过程&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;异常的&lt;strong&gt;发生&lt;/strong&gt;和&lt;strong&gt;捕捉&lt;/strong&gt;，是在&lt;strong&gt;硬件&lt;/strong&gt;层面完成的&lt;/li&gt;
+&lt;li&gt;异常的&lt;strong&gt;处理&lt;/strong&gt;，是在&lt;strong&gt;软件&lt;/strong&gt;层面完成的&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;计算机会为每一种可能发生的异常，分配一个&lt;strong&gt;异常代码&lt;/strong&gt;（Exception Number），别称&lt;strong&gt;中断向量&lt;/strong&gt;（Interrupt Vector）&lt;/li&gt;
+&lt;li&gt;异常发生的时候，通常是CPU检测到一个特殊的&lt;strong&gt;信号&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;在组成原理里面，一般叫作发生了一个&lt;strong&gt;事件&lt;/strong&gt;（Event），CPU在检测到事件的时候，就已经拿到了&lt;strong&gt;对应的异常代码&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;异常代码&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;IO&lt;/strong&gt;发出的信号的异常代码，是由&lt;strong&gt;操作系统&lt;/strong&gt;来分配，即由&lt;strong&gt;软件&lt;/strong&gt;来设定&lt;/li&gt;
+&lt;li&gt;像&lt;strong&gt;加法溢出&lt;/strong&gt;这样的异常代码，是由&lt;strong&gt;CPU预分配&lt;/strong&gt;的，即由&lt;strong&gt;硬件&lt;/strong&gt;来设定&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;拿到&lt;strong&gt;异常代码&lt;/strong&gt;后，CPU会触发&lt;strong&gt;异常处理流程&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;计算机在&lt;strong&gt;内存&lt;/strong&gt;里，会保留一个&lt;strong&gt;异常表&lt;/strong&gt;（Exception Table），别称&lt;strong&gt;中断向量表&lt;/strong&gt;（Interrupt Vector Table）&lt;/li&gt;
+&lt;li&gt;存放的是不同的异常代码对应的异常处理程序所在的&lt;strong&gt;地址&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;CPU拿到异常代码后，会先把当前程序的&lt;strong&gt;执行现场&lt;/strong&gt;（CPU当前运行程序&lt;strong&gt;用到的所有寄存器&lt;/strong&gt;），保存到&lt;strong&gt;程序栈&lt;/strong&gt;里面&lt;/li&gt;
+&lt;li&gt;然后&lt;strong&gt;根据异常代码查询&lt;/strong&gt;，找到对应的&lt;strong&gt;异常处理程序&lt;/strong&gt;，最后把后续指令执行的&lt;strong&gt;指挥权&lt;/strong&gt;，交给这个异常处理程序&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;异常可以由&lt;strong&gt;硬件&lt;/strong&gt;触发，也可以由&lt;strong&gt;软件&lt;/strong&gt;触发&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 超线程 + SIMD</title>
+    <link href="http://zhongmingmao.me/2020/01/19/computer-organization-hyper-threading-simd/"/>
+    <id>http://zhongmingmao.me/2020/01/19/computer-organization-hyper-threading-simd/</id>
+    <published>2020-01-19T16:59:50.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;超线程-–-线程级并行&quot;&gt;&lt;a href=&quot;#超线程-–-线程级并行&quot; class=&quot;headerlink&quot; title=&quot;超线程 – 线程级并行&quot;&gt;&lt;/a&gt;超线程 – 线程级并行&lt;/h2&gt;&lt;h3 id=&quot;Pentium-4&quot;&gt;&lt;a href=&quot;#Pentium-4&quot; class=&quot;headerlink&quot; title=&quot;Pentium 4&quot;&gt;&lt;/a&gt;Pentium 4&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;Pentium 4失败的原因：&lt;strong&gt;CPU的流水线级数太深&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;超长的流水线，使得之前很多&lt;strong&gt;解决冒险&lt;/strong&gt;、&lt;strong&gt;提升并发&lt;/strong&gt;的方案都用不上&lt;/li&gt;
+&lt;li&gt;解决冒险、提升并发的方案，本质上是一种&lt;strong&gt;指令级并行&lt;/strong&gt;的技术方案，即CPU希望在同一个时间，去&lt;strong&gt;并行执行两条指令&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;但这两条指令，原本在代码里是有&lt;strong&gt;先后顺序&lt;/strong&gt;的&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;无论是&lt;strong&gt;流水线架构&lt;/strong&gt;、&lt;strong&gt;分支预测&lt;/strong&gt;以及&lt;strong&gt;乱序执行&lt;/strong&gt;，还是&lt;strong&gt;超标量&lt;/strong&gt;和&lt;strong&gt;超长指令字&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;都是想通过在同一时间执行两条指令，来提升CPU的&lt;strong&gt;吞吐率&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;但在Pentium 4上，上面这些方法都可能因为&lt;strong&gt;流水线太深&lt;/strong&gt;，而&lt;strong&gt;起不到效果&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;更深的流水线意味着&lt;strong&gt;同时在流水线里面的指令就很多，相互的依赖关系就多&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;因此，很多时候不得不把&lt;strong&gt;流水线停顿&lt;/strong&gt;下来，&lt;strong&gt;插入很多NOP操作&lt;/strong&gt;，来解决这些&lt;strong&gt;依赖&lt;/strong&gt;带来的&lt;strong&gt;冒险&lt;/strong&gt;问题&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- Superscalar + VLIW</title>
+    <link href="http://zhongmingmao.me/2020/01/19/computer-organization-superscalar-vliw/"/>
+    <id>http://zhongmingmao.me/2020/01/19/computer-organization-superscalar-vliw/</id>
+    <published>2020-01-19T01:26:45.000Z</published>
+    <updated>2020-04-30T05:35:06.462Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;吞吐率&quot;&gt;&lt;a href=&quot;#吞吐率&quot; class=&quot;headerlink&quot; title=&quot;吞吐率&quot;&gt;&lt;/a&gt;吞吐率&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;程序的CPU执行时间 = 指令数 × &lt;strong&gt;CPI&lt;/strong&gt; × Clock Cycle Time&lt;/li&gt;
+&lt;li&gt;CPI = Clock Per Instruction&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;IPC = 1/CPI = Instruction Per Clock&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;一个时钟周期内能够执行的指令数&lt;/strong&gt;，代表了&lt;strong&gt;CPU的吞吐率&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;最佳&lt;/strong&gt;情况下，IPC只能到&lt;strong&gt;1&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;无论做了哪些流水线层面的优化，即使做到了&lt;strong&gt;指令执行&lt;/strong&gt;层面的&lt;strong&gt;乱序执行&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;CPU仍然&lt;strong&gt;只能在一个时钟周期内取一条指令！！&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;无论指令后续无论优化得多好，一个时钟周期也只能执行一条指令，&lt;strong&gt;IPC只能是1&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;但&lt;strong&gt;Intel&lt;/strong&gt; CPU或者&lt;strong&gt;ARM&lt;/strong&gt; CPU，一般IPC能做到&lt;strong&gt;2&lt;/strong&gt;以上&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&quot;https://computer-composition-1253868755.cos.ap-guangzhou.myqcloud.com/computer-organization-superscalar-vliw-ipc.jpg&quot; width=&quot;1000/&quot;&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 冒险</title>
+    <link href="http://zhongmingmao.me/2020/01/17/computer-organization-hazard/"/>
+    <id>http://zhongmingmao.me/2020/01/17/computer-organization-hazard/</id>
+    <published>2020-01-17T16:55:09.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;冒险&quot;&gt;&lt;a href=&quot;#冒险&quot; class=&quot;headerlink&quot; title=&quot;冒险&quot;&gt;&lt;/a&gt;冒险&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;流水线架构的CPU，是&lt;strong&gt;主动&lt;/strong&gt;进行的冒险选择，期望通过冒险带来&lt;strong&gt;更高的回报&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;对于各种冒险可能造成的问题，都准备好了&lt;strong&gt;应对方案&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;分类&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;结构冒险&lt;/strong&gt;（&lt;strong&gt;Structural&lt;/strong&gt; Hazard）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;数据冒险&lt;/strong&gt;（&lt;strong&gt;Data&lt;/strong&gt; Hazard）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;控制冒险&lt;/strong&gt;（&lt;strong&gt;Control&lt;/strong&gt; Hazard）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 指令流水线</title>
+    <link href="http://zhongmingmao.me/2020/01/17/computer-organization-instruction-pipeline/"/>
+    <id>http://zhongmingmao.me/2020/01/17/computer-organization-instruction-pipeline/</id>
+    <published>2020-01-17T15:36:34.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;单指令周期处理器&quot;&gt;&lt;a href=&quot;#单指令周期处理器&quot; class=&quot;headerlink&quot; title=&quot;单指令周期处理器&quot;&gt;&lt;/a&gt;单指令周期处理器&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;一条CPU指令的执行：&lt;strong&gt;Fetch -&amp;gt; Decode -&amp;gt; Execute&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;这个执行过程，&lt;strong&gt;最少&lt;/strong&gt;需要花费&lt;strong&gt;一个时钟周期&lt;/strong&gt;，因为在&lt;strong&gt;取指令&lt;/strong&gt;的时候，需要通过时钟周期的信号，来决定&lt;strong&gt;计数器的自增&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;单指令周期处理器&lt;/strong&gt;（Single Cycle Processor）：在&lt;strong&gt;一个时钟周期&lt;/strong&gt;内，处理器正好能&lt;strong&gt;处理一条指令&lt;/strong&gt;，即&lt;strong&gt;CPI&lt;/strong&gt;为&lt;strong&gt;1&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;时钟周期是&lt;strong&gt;固定&lt;/strong&gt;的，但指令的&lt;strong&gt;电路复杂程度&lt;/strong&gt;是不同的，因此一条指令的&lt;strong&gt;实际执行时间&lt;/strong&gt;是不同的&lt;ul&gt;
+&lt;li&gt;随着&lt;strong&gt;门电路层数&lt;/strong&gt;的增加，由于&lt;strong&gt;门延迟&lt;/strong&gt;的存在，&lt;strong&gt;位数多、计算复杂&lt;/strong&gt;的指令需要的执行时间会更长&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;不同指令的执行时间不同，但需要让&lt;strong&gt;所有指令&lt;/strong&gt;都在一个时钟周期内完成，只能把时钟周期和&lt;strong&gt;执行时间最长的指令&lt;/strong&gt;设成一样&lt;ul&gt;
+&lt;li&gt;快速执行完成的指令，需要等待&lt;strong&gt;满&lt;/strong&gt;一个时钟周期，才能执行下一条指令&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;CPI能够保持在1，但&lt;strong&gt;时钟频率没办法设置太高&lt;/strong&gt;，因为有些&lt;strong&gt;复杂指令&lt;/strong&gt;是没办法在一个时钟周期内运行完成的&lt;ul&gt;
+&lt;li&gt;在下一个时钟周期到来，开始执行下一条指令的时候，前一条指令的执行结果可能还没有写入到&lt;strong&gt;寄存器&lt;/strong&gt;里&lt;/li&gt;
+&lt;li&gt;那么下一条指令读取的数据就是&lt;strong&gt;不准确&lt;/strong&gt;的，会&lt;strong&gt;出现错误&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;无论是PC上使用的&lt;strong&gt;Intel CPU&lt;/strong&gt;，还是手机上使用的&lt;strong&gt;ARM CPU&lt;/strong&gt;，都不是单指令周期处理器，而是采用了&lt;strong&gt;指令流水线&lt;/strong&gt;的技术&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 建立数据通路</title>
+    <link href="http://zhongmingmao.me/2020/01/16/computer-organization-build-data-path/"/>
+    <id>http://zhongmingmao.me/2020/01/16/computer-organization-build-data-path/</id>
+    <published>2020-01-16T14:02:33.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;三种周期&quot;&gt;&lt;a href=&quot;#三种周期&quot; class=&quot;headerlink&quot; title=&quot;三种周期&quot;&gt;&lt;/a&gt;三种周期&lt;/h2&gt;&lt;h3 id=&quot;指令周期&quot;&gt;&lt;a href=&quot;#指令周期&quot; class=&quot;headerlink&quot; title=&quot;指令周期&quot;&gt;&lt;/a&gt;指令周期&lt;/h3&gt;&lt;ol&gt;
+&lt;li&gt;执行一条指令的过程&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Fetch&lt;/strong&gt;（取得指令）&lt;ul&gt;
+&lt;li&gt;从&lt;strong&gt;PC寄存器&lt;/strong&gt;里面找到对应的&lt;strong&gt;指令地址&lt;/strong&gt;，根据指令地址从&lt;strong&gt;内存&lt;/strong&gt;里把具体的指令，&lt;strong&gt;加载到指令寄存器&lt;/strong&gt;中&lt;/li&gt;
+&lt;li&gt;然后把PC寄存器&lt;strong&gt;自增&lt;/strong&gt;，便于未来执行下一条指令&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Decode&lt;/strong&gt;（指令译码）&lt;ul&gt;
+&lt;li&gt;根据&lt;strong&gt;指令寄存器&lt;/strong&gt;里面的指令，解析成要进行什么样的操作，是&lt;strong&gt;R、I、J&lt;/strong&gt;中的哪一种指令&lt;/li&gt;
+&lt;li&gt;具体要操作哪些&lt;strong&gt;寄存器&lt;/strong&gt;、&lt;strong&gt;数据&lt;/strong&gt;或者&lt;strong&gt;内存地址&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Execute&lt;/strong&gt;（执行指令）&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;实际运行&lt;/strong&gt;对应的R、I、J这些特定的指令，进行&lt;strong&gt;算术逻辑操作&lt;/strong&gt;、&lt;strong&gt;数据传输&lt;/strong&gt;或者&lt;strong&gt;直接的地址跳转&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;重复上面步骤&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;指令周期&lt;/strong&gt;（Instruction Cycle）：&lt;strong&gt;Fetch -&amp;gt; Decode -&amp;gt; Execute&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 定点数 + 浮点数</title>
+    <link href="http://zhongmingmao.me/2020/01/15/computer-organization-fix-float/"/>
+    <id>http://zhongmingmao.me/2020/01/15/computer-organization-fix-float/</id>
+    <published>2020-01-15T01:01:45.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;浮点数的不精确性&quot;&gt;&lt;a href=&quot;#浮点数的不精确性&quot; class=&quot;headerlink&quot; title=&quot;浮点数的不精确性&quot;&gt;&lt;/a&gt;浮点数的不精确性&lt;/h2&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&amp;gt;&amp;gt;&amp;gt; 0.3 + 0.6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;0.8999999999999999&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;ol&gt;
+&lt;li&gt;32bit是无法表达所有实数的，只能表达&lt;code&gt;2^32&lt;/code&gt;次方不同的数字，差不多&lt;strong&gt;40亿&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;40亿个数字比起无限多的实数集合只是沧海一粟，应该让这40亿个数映射到实数集合上的哪些数字，在实际应用中才最划算&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 乘法器</title>
+    <link href="http://zhongmingmao.me/2020/01/14/computer-organization-multiplier/"/>
+    <id>http://zhongmingmao.me/2020/01/14/computer-organization-multiplier/</id>
+    <published>2020-01-14T15:38:48.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;13-×-9&quot;&gt;&lt;a href=&quot;#13-×-9&quot; class=&quot;headerlink&quot; title=&quot;13 × 9&quot;&gt;&lt;/a&gt;13 × 9&lt;/h2&gt;&lt;img src=&quot;https://computer-composition-1253868755.cos.ap-guangzhou.myqcloud.com/computer-organization-multiplier-13-9.jpg&quot; width=&quot;1000/&quot;&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 加法器</title>
+    <link href="http://zhongmingmao.me/2020/01/13/computer-organization-adder/"/>
+    <id>http://zhongmingmao.me/2020/01/13/computer-organization-adder/</id>
+    <published>2020-01-13T05:02:26.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;基本门电路&quot;&gt;&lt;a href=&quot;#基本门电路&quot; class=&quot;headerlink&quot; title=&quot;基本门电路&quot;&gt;&lt;/a&gt;基本门电路&lt;/h2&gt;&lt;img src=&quot;https://computer-composition-1253868755.cos.ap-guangzhou.myqcloud.com/computer-organization-adder-gate-circuit.jpg&quot; width=&quot;1000/&quot;&gt;
+
+&lt;ol&gt;
+&lt;li&gt;基本门电路：&lt;strong&gt;输入都是两个单独的bit，输出是一个单独的bit&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;如果要对2个8bit的数字，计算&lt;strong&gt;与或非&lt;/strong&gt;的简单逻辑（无进位），只需要连续摆放8个开关，来代表一个8bit数字&lt;/li&gt;
+&lt;li&gt;这样的两组开关，从左到右，上下单个的位开关之间，都统一用『&lt;strong&gt;与门&lt;/strong&gt;』或者『&lt;strong&gt;或门&lt;/strong&gt;』连起来&lt;ul&gt;
+&lt;li&gt;就能实现两个8bit数的&lt;strong&gt;AND&lt;/strong&gt;运算或者&lt;strong&gt;OR&lt;/strong&gt;运算&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 电路</title>
+    <link href="http://zhongmingmao.me/2020/01/11/computer-organization-circuit/"/>
+    <id>http://zhongmingmao.me/2020/01/11/computer-organization-circuit/</id>
+    <published>2020-01-11T16:23:39.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;电报机&quot;&gt;&lt;a href=&quot;#电报机&quot; class=&quot;headerlink&quot; title=&quot;电报机&quot;&gt;&lt;/a&gt;电报机&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;电报机的本质：&lt;strong&gt;蜂鸣器&lt;/strong&gt; + &lt;strong&gt;电线&lt;/strong&gt; + &lt;strong&gt;按钮开关&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;蜂鸣器装在接收方，开关留在发送方，双方通过电线连在一起&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&quot;https://computer-composition-1253868755.cos.ap-guangzhou.myqcloud.com/computer-organization-circuit-telegraph.jpg&quot; width=&quot;600/&quot;&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 二进制编码</title>
+    <link href="http://zhongmingmao.me/2020/01/11/computer-organization-binary/"/>
+    <id>http://zhongmingmao.me/2020/01/11/computer-organization-binary/</id>
+    <published>2020-01-11T13:27:38.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;补码表示法&quot;&gt;&lt;a href=&quot;#补码表示法&quot; class=&quot;headerlink&quot; title=&quot;补码表示法&quot;&gt;&lt;/a&gt;补码表示法&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;原码表示法&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;0011&lt;/code&gt;为3，&lt;code&gt;1011&lt;/code&gt;为-3&lt;/li&gt;
+&lt;li&gt;缺点：&lt;code&gt;0000&lt;/code&gt;和&lt;code&gt;1000&lt;/code&gt;都表示为0&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;浪费 + 模凌两可&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;由此诞生了&lt;strong&gt;补码表示法&lt;/strong&gt;，其实就是一个简单的&lt;strong&gt;翻转&lt;/strong&gt;而已&lt;ul&gt;
+&lt;li&gt;用补码表示负数，使得&lt;strong&gt;整数的相加&lt;/strong&gt;变得容易，不需要做任何特殊处理，当成&lt;strong&gt;普通的二进制相加&lt;/strong&gt;即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 动态链接</title>
+    <link href="http://zhongmingmao.me/2020/01/10/computer-organization-dynamic-link/"/>
+    <id>http://zhongmingmao.me/2020/01/10/computer-organization-dynamic-link/</id>
+    <published>2020-01-10T07:01:37.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;静态链接&quot;&gt;&lt;a href=&quot;#静态链接&quot; class=&quot;headerlink&quot; title=&quot;静态链接&quot;&gt;&lt;/a&gt;静态链接&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;把对应的不同文件内的代码段合并在一起，成为最后的&lt;strong&gt;可执行文件&lt;/strong&gt;，可以做到&lt;strong&gt;代码在开发阶段的复用&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;很多程序都需要通过&lt;strong&gt;装载器&lt;/strong&gt;装载到&lt;strong&gt;内存&lt;/strong&gt;里面，里面链接好的&lt;strong&gt;同样的功能代码&lt;/strong&gt;，也都需要再装载一遍，&lt;strong&gt;再占一遍内存空间&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;img src=&quot;https://computer-composition-1253868755.cos.ap-guangzhou.myqcloud.com/computer-organization-dynamic-link-usr.jpg&quot; width=&quot;1000/&quot;&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 段 + 页</title>
+    <link href="http://zhongmingmao.me/2020/01/09/computer-organization-segmentation-page/"/>
+    <id>http://zhongmingmao.me/2020/01/09/computer-organization-segmentation-page/</id>
+    <published>2020-01-09T05:06:28.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;程序装载&quot;&gt;&lt;a href=&quot;#程序装载&quot; class=&quot;headerlink&quot; title=&quot;程序装载&quot;&gt;&lt;/a&gt;程序装载&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;背景&lt;ul&gt;
+&lt;li&gt;通过&lt;strong&gt;链接器&lt;/strong&gt;，把多个目标文件合并成一个最终可执行文件&lt;/li&gt;
+&lt;li&gt;运行可执行文件时，其实是通过一个&lt;strong&gt;装载器&lt;/strong&gt;，解析&lt;code&gt;ELF&lt;/code&gt;或者&lt;code&gt;PE&lt;/code&gt;格式的可执行文件&lt;ul&gt;
+&lt;li&gt;装载器会把对应的指令和数据加载到内存里面，让CPU去执行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;装载器需要满足两个条件&lt;ul&gt;
+&lt;li&gt;可执行程序加载后&lt;strong&gt;占用的内存空间&lt;/strong&gt;应该是&lt;strong&gt;连续&lt;/strong&gt;的&lt;ul&gt;
+&lt;li&gt;执行程序时，程序计数器是&lt;strong&gt;顺序&lt;/strong&gt;地一条一条指令执行下去&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;需要&lt;strong&gt;同时加载&lt;/strong&gt;很多个程序，并且&lt;strong&gt;不能让程序自己规定在内存中加载的位置&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;内存地址&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;虚拟&lt;/strong&gt;内存地址：&lt;strong&gt;指令&lt;/strong&gt;里用到的内存地址&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;物理&lt;/strong&gt;内存地址：&lt;strong&gt;内存硬件&lt;/strong&gt;里的空间地址&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;一个思路&lt;ul&gt;
+&lt;li&gt;在&lt;strong&gt;物理内存&lt;/strong&gt;里面找一段&lt;strong&gt;连续&lt;/strong&gt;的内存空间，分配给装载的程序&lt;ul&gt;
+&lt;li&gt;然后把这段&lt;strong&gt;连续的内存空间地址&lt;/strong&gt;和整个程序&lt;strong&gt;指令里指定的内存地址&lt;/strong&gt;做一个&lt;strong&gt;映射&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;程序里有指令和各种内存地址，而我们&lt;strong&gt;只需要关心虚拟内存地址&lt;/strong&gt;即可&lt;/li&gt;
+&lt;li&gt;对任何一个程序来说，它所看到的都是&lt;strong&gt;同样的内存地址&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;维护一个&lt;strong&gt;虚拟内存&lt;/strong&gt;到&lt;strong&gt;物理内存&lt;/strong&gt;的&lt;strong&gt;映射&lt;/strong&gt;表&lt;/li&gt;
+&lt;li&gt;实际程序指令执行的时候，会通过虚拟内存地址，找到对应的物理内存地址，然后执行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;因为是&lt;strong&gt;连续的内存地址空间&lt;/strong&gt;，只需要维护映射关系的&lt;strong&gt;起始地址&lt;/strong&gt;和&lt;strong&gt;对应的空间大小&lt;/strong&gt;即可&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- ELF + 静态链接</title>
+    <link href="http://zhongmingmao.me/2020/01/08/computer-organization-elf-static-link/"/>
+    <id>http://zhongmingmao.me/2020/01/08/computer-organization-elf-static-link/</id>
+    <published>2020-01-08T04:48:05.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;代码拆分&quot;&gt;&lt;a href=&quot;#代码拆分&quot; class=&quot;headerlink&quot; title=&quot;代码拆分&quot;&gt;&lt;/a&gt;代码拆分&lt;/h2&gt;&lt;h3 id=&quot;源代码&quot;&gt;&lt;a href=&quot;#源代码&quot; class=&quot;headerlink&quot; title=&quot;源代码&quot;&gt;&lt;/a&gt;源代码&lt;/h3&gt;&lt;h4 id=&quot;add-lib-c&quot;&gt;&lt;a href=&quot;#add-lib-c&quot; class=&quot;headerlink&quot; title=&quot;add_lib.c&quot;&gt;&lt;/a&gt;add_lib.c&lt;/h4&gt;&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// add_lib.c&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; a, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; b)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; a+b;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;link-example-c&quot;&gt;&lt;a href=&quot;#link-example-c&quot; class=&quot;headerlink&quot; title=&quot;link_example.c&quot;&gt;&lt;/a&gt;link_example.c&lt;/h4&gt;&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// link_example.c&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;meta-string&quot;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; a = &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; b = &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; c = add(a, b);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;printf&lt;/span&gt;(&lt;span class=&quot;string&quot;&gt;&quot;c=%d\n&quot;&lt;/span&gt;, c);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 函数调用</title>
+    <link href="http://zhongmingmao.me/2020/01/07/computer-organization-function-call/"/>
+    <id>http://zhongmingmao.me/2020/01/07/computer-organization-function-call/</id>
+    <published>2020-01-07T13:08:42.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;程序栈&quot;&gt;&lt;a href=&quot;#程序栈&quot; class=&quot;headerlink&quot; title=&quot;程序栈&quot;&gt;&lt;/a&gt;程序栈&lt;/h2&gt;&lt;figure class=&quot;highlight c&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// function_example.c&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;include&lt;/span&gt; &lt;span class=&quot;meta-string&quot;&gt;&amp;lt;stdio.h&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; a, &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; b)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; a+b;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; x = &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; y = &lt;span class=&quot;number&quot;&gt;10&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; u = add(x, y);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- goto</title>
+    <link href="http://zhongmingmao.me/2020/01/06/computer-organization-goto/"/>
+    <id>http://zhongmingmao.me/2020/01/06/computer-organization-goto/</id>
+    <published>2020-01-06T12:29:35.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;CPU执行指令&quot;&gt;&lt;a href=&quot;#CPU执行指令&quot; class=&quot;headerlink&quot; title=&quot;CPU执行指令&quot;&gt;&lt;/a&gt;CPU执行指令&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;CPU是由一堆&lt;strong&gt;寄存器&lt;/strong&gt;组成的，而寄存器是由多个&lt;strong&gt;触发器&lt;/strong&gt;（Flip-Flop）或者&lt;strong&gt;锁存器&lt;/strong&gt;（Latches）组成的简单电路&lt;ul&gt;
+&lt;li&gt;触发器和锁存器是两种不同原理的数字电路组成的&lt;strong&gt;逻辑门&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;N个触发器或者锁存器，就可以组成一个N位的寄存器，能保存N位的数据，64位的Intel服务器，寄存器就是64位的&lt;/li&gt;
+&lt;li&gt;寄存器分类&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;PC寄存器&lt;/strong&gt;（Program Counter Register），也称为&lt;strong&gt;指令地址寄存器&lt;/strong&gt;（Instruction Address Register）&lt;ul&gt;
+&lt;li&gt;用来存放&lt;strong&gt;下一条&lt;/strong&gt;需要执行的计算机指令的&lt;strong&gt;内存地址&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;指令寄存器&lt;/strong&gt;（Instruction Register）&lt;ul&gt;
+&lt;li&gt;用来存放&lt;strong&gt;当前正在执行&lt;/strong&gt;的指令&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;条件码寄存器&lt;/strong&gt;（Status Register）&lt;ul&gt;
+&lt;li&gt;用里面的&lt;strong&gt;一个个标志位&lt;/strong&gt;（Flag），存放CPU进行&lt;strong&gt;算术&lt;/strong&gt;或者&lt;strong&gt;逻辑&lt;/strong&gt;计算的结果&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;其它&lt;ul&gt;
+&lt;li&gt;整数寄存器、浮点数寄存器、向量寄存器、地址寄存器、通用寄存器&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;程序执行&lt;ul&gt;
+&lt;li&gt;CPU会根据&lt;strong&gt;PC寄存器&lt;/strong&gt;里面的地址，从&lt;strong&gt;内存&lt;/strong&gt;里把需要执行的指令读取到&lt;strong&gt;指令寄存器&lt;/strong&gt;里面执行&lt;/li&gt;
+&lt;li&gt;然后根据&lt;strong&gt;指令长度&lt;/strong&gt;自增，开始&lt;strong&gt;顺序读取&lt;/strong&gt;下一条指令，一个程序的指令，在内存里面是&lt;strong&gt;连续保存&lt;/strong&gt;的，也会一条条&lt;strong&gt;顺序加载&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;特殊指令，如J类指令（&lt;strong&gt;跳转指令&lt;/strong&gt;），会&lt;strong&gt;直接修改PC寄存器里面的地址值&lt;/strong&gt;&lt;ul&gt;
+&lt;li&gt;这样下一条要执行的指令就不是从内存里面顺序加载的了&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>数学 -- 保证不输钱</title>
+    <link href="http://zhongmingmao.me/2020/01/05/math-not-to-lose-money/"/>
+    <id>http://zhongmingmao.me/2020/01/05/math-not-to-lose-money/</id>
+    <published>2020-01-05T14:02:14.000Z</published>
+    <updated>2020-04-30T05:35:06.474Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;问题抽象一下：假设有n个坑，第$i$个坑投注了$X_i$，倍率为$Y_i$，怎样设置倍率才能保证不亏钱？&lt;/p&gt;
+&lt;p&gt;推导过程如下：&lt;/p&gt;
+&lt;p&gt;假设某场第$k$个坑赔最少，最少赔付记为$min = (X_k \times Y_k)$&lt;/p&gt;
+&lt;p&gt;则$(X_k \times Y_k) \leq (X_l \times Y_l) \quad l \in [1,n]$&lt;/p&gt;
+&lt;p&gt;易得$\frac{X_k \times Y_k}{Y_l} \leq X_l \quad l \in [1,n]$&lt;/p&gt;
+&lt;p&gt;而收入为$(\sum_{i=1}^n{X_i}) \geq (\sum_{i=1}^n{\frac{X_k \times Y_k}{Y_i}}) = (\sum_{i=1}^n{\frac{1}{Y_i}}) \times (X_k \times Y_k) = (\sum_{i=1}^n{\frac{1}{Y_i}}) \times min$&lt;/p&gt;
+&lt;p&gt;而不亏钱，只要保证$(\sum_{i=1}^n{X_i}) \geq min$即可，而由上易知，$(\sum_{i=1}^n{\frac{1}{Y_i}}) \geq 1$为不亏钱的充分条件&lt;/p&gt;
+&lt;p&gt;回到某同事预设的倍率：&lt;code&gt;[5, 5, 5, 5, 10, 15, 25, 45]&lt;/code&gt;，$(\sum_{i=1}^n{\frac{1}{Y_i}}) = (\frac{1}{5}+\frac{1}{5}+\frac{1}{5}+\frac{1}{5}+\frac{1}{10}+\frac{1}{15}+\frac{1}{25}+\frac{1}{45}) \approx 1.029 \geq 1$&lt;/p&gt;
+&lt;p&gt;理论上按这个预设倍率是不会亏钱的&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="Math" scheme="http://zhongmingmao.me/categories/math/"/>
+    
+    
+      <category term="Math" scheme="http://zhongmingmao.me/tags/math/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 指令</title>
+    <link href="http://zhongmingmao.me/2020/01/04/computer-organization-instruction/"/>
+    <id>http://zhongmingmao.me/2020/01/04/computer-organization-instruction/</id>
+    <published>2020-01-04T02:24:49.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;CPU-计算机指令&quot;&gt;&lt;a href=&quot;#CPU-计算机指令&quot; class=&quot;headerlink&quot; title=&quot;CPU + 计算机指令&quot;&gt;&lt;/a&gt;CPU + 计算机指令&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;硬件&lt;/strong&gt;的角度&lt;ul&gt;
+&lt;li&gt;CPU是一个&lt;strong&gt;超大规模集成电路&lt;/strong&gt;，通过电路实现了加法、乘法乃至各种各样的处理逻辑&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;软件工程师&lt;/strong&gt;的角度&lt;ul&gt;
+&lt;li&gt;CPU就是一个执行各种&lt;strong&gt;计算机指令&lt;/strong&gt;的逻辑机器&lt;/li&gt;
+&lt;li&gt;计算机指令是一门CPU能听懂的语言，也称为&lt;strong&gt;机器语言&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;不同的CPU能够听懂的语言不太一样，两种CPU各自支持的语言，就是两组不同的&lt;strong&gt;计算机指令集&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;计算机程序平时是存储在存储器中，这种程序指令存储在存储器里面的计算机，叫作&lt;strong&gt;存储程序型计算机&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 提升性能</title>
+    <link href="http://zhongmingmao.me/2020/01/03/computer-organization-improve-performance/"/>
+    <id>http://zhongmingmao.me/2020/01/03/computer-organization-improve-performance/</id>
+    <published>2020-01-03T05:07:49.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;CPU的功耗&quot;&gt;&lt;a href=&quot;#CPU的功耗&quot; class=&quot;headerlink&quot; title=&quot;CPU的功耗&quot;&gt;&lt;/a&gt;CPU的功耗&lt;/h2&gt;&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;CPU time = 时钟周期时间（Clock Cycle Time） × CPU时钟周期数（CPU Cycles）&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;         = 时钟周期时间（Clock Cycle Time） × 指令数 × 每条指令的平均周期数（Cycles Per Instruction，CPI）&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+
+&lt;ol&gt;
+&lt;li&gt;80年代开始，CPU硬件工程师主要着力&lt;strong&gt;提升CPU主频&lt;/strong&gt;，到功耗是CPU的&lt;strong&gt;人体极限&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;CPU，一般被叫做&lt;strong&gt;超大规模集成电路&lt;/strong&gt;，这些电路，实际上都是一个个&lt;strong&gt;晶体管&lt;/strong&gt;组合而成的&lt;ul&gt;
+&lt;li&gt;CPU计算，实际上是让晶体管里面的『开关』不断地去打开或关闭，来组合完成各种运算和功能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;如果要计算得快，有两个方向：&lt;strong&gt;增加密度&lt;/strong&gt;（7nm制程）、&lt;strong&gt;提升主频&lt;/strong&gt;，但这两者都会增加&lt;strong&gt;功耗&lt;/strong&gt;，带来耗电和散热的问题&lt;ul&gt;
+&lt;li&gt;密度 -&amp;gt; 晶体管数量&lt;/li&gt;
+&lt;li&gt;主频 -&amp;gt; 开关频率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;如果功耗增加太多，会导致CPU散热跟不上，此时就需要&lt;strong&gt;降低电压&lt;/strong&gt;（低压版CPU）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;功耗 ≈ 1/2 × 负载电容 × 电压的平方 × 开关频率 × 晶体管数量&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>计算机组成 -- 性能</title>
+    <link href="http://zhongmingmao.me/2020/01/02/computer-organization-performance/"/>
+    <id>http://zhongmingmao.me/2020/01/02/computer-organization-performance/</id>
+    <published>2020-01-02T10:33:52.000Z</published>
+    <updated>2020-04-30T05:35:06.458Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;性能指标&quot;&gt;&lt;a href=&quot;#性能指标&quot; class=&quot;headerlink&quot; title=&quot;性能指标&quot;&gt;&lt;/a&gt;性能指标&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;响应时间&lt;/strong&gt;（Response time）、&lt;strong&gt;执行时间&lt;/strong&gt;（Execution time）&lt;ul&gt;
+&lt;li&gt;执行一个程序，需要花多少时间&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;吞吐率&lt;/strong&gt;（Throughput）、&lt;strong&gt;带宽&lt;/strong&gt;（Bandwidth）&lt;ul&gt;
+&lt;li&gt;单位时间范围内，能处理多少数据或执行多少指令，可以通过多核、集群等方式来提升吞吐率&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;性能 =  1/响应时间&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/categories/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/categories/computer-basics/computer-organization/"/>
+    
+    
+      <category term="Computer Basics" scheme="http://zhongmingmao.me/tags/computer-basics/"/>
+    
+      <category term="Computer Organization" scheme="http://zhongmingmao.me/tags/computer-organization/"/>
+    
+  </entry>
+  
+</feed>
